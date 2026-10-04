@@ -1,0 +1,9 @@
+# Hemmeligheder og persistent data skal aldrig i git
+.env
+.env.*
+!.env.example
+data/
+data-*/
+backup/
+node_modules/
+*.log

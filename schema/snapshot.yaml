@@ -1,0 +1,3228 @@
+version: 1
+directus: 11.17.4
+vendor: postgres
+collections:
+  - collection: arkivmateriale
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: arkivmateriale
+      color: null
+      display_template: '{{arkivnummer}} – {{titel}}'
+      group: null
+      hidden: false
+      icon: description
+      item_duplication_fields: null
+      note: Dokumenter i arkivet
+      preview_url: null
+      singleton: false
+      sort: 2
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Arkivmateriale
+          singular: Dokument
+          translation: Arkivmateriale
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: arkivmateriale
+  - collection: arkivmateriale_files
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: arkivmateriale_files
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: arkivmateriale_files
+  - collection: bibliotek
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: bibliotek
+      color: null
+      display_template: '{{titel}} ({{forfatter}})'
+      group: null
+      hidden: false
+      icon: menu_book
+      item_duplication_fields: null
+      note: Bøger på biblioteket
+      preview_url: null
+      singleton: false
+      sort: 3
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Bøger
+          singular: Bog
+          translation: Bibliotek
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: bibliotek
+  - collection: genstande
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: genstande
+      color: null
+      display_template: '{{inventarnummer}} – {{titel}}'
+      group: null
+      hidden: false
+      icon: museum
+      item_duplication_fields: null
+      note: Museumsgenstande
+      preview_url: null
+      singleton: false
+      sort: 1
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Genstande
+          singular: Genstand
+          translation: Genstande
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: genstande
+  - collection: genstande_files
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: genstande_files
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: genstande_files
+  - collection: placeringer
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: placeringer
+      color: null
+      display_template: '{{navn}}'
+      group: null
+      hidden: false
+      icon: shelves
+      item_duplication_fields: null
+      note: >-
+        Rum, reoler, montrer, vægge, hylder og lignende. Brug "Overordnet
+        placering" til at bygge et hierarki (rum > reol > hylde).
+      preview_url: null
+      singleton: false
+      sort: 4
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Placeringer
+          singular: Placering
+          translation: Placeringer
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: placeringer
+fields:
+  - collection: arkivmateriale
+    field: id
+    type: integer
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: arkivmateriale
+      data_type: integer
+      default_value: nextval('arkivmateriale_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: arkivnummer
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: arkivnummer
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 2
+      special: null
+      translations:
+        - language: da-DK
+          translation: Arkivnummer
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: arkivnummer
+      table: arkivmateriale
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: dokumenttype
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Protokol
+            value: protokol
+          - text: Referat
+            value: referat
+          - text: Brev/korrespondance
+            value: brev
+          - text: Regnskab
+            value: regnskab
+          - text: Medlemsliste/matrikel
+            value: medlemsliste
+          - text: Program/indbydelse
+            value: program
+          - text: Tale/foredrag
+            value: tale
+          - text: Tegning/plan
+            value: tegning
+          - text: Fotografi
+            value: fotografi
+          - text: Andet
+            value: andet
+        showAsDot: false
+      field: dokumenttype
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Protokol
+            value: protokol
+          - text: Referat
+            value: referat
+          - text: Brev/korrespondance
+            value: brev
+          - text: Regnskab
+            value: regnskab
+          - text: Medlemsliste/matrikel
+            value: medlemsliste
+          - text: Program/indbydelse
+            value: program
+          - text: Tale/foredrag
+            value: tale
+          - text: Tegning/plan
+            value: tegning
+          - text: Fotografi
+            value: fotografi
+          - text: Andet
+            value: andet
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations:
+        - language: da-DK
+          translation: Dokumenttype
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: dokumenttype
+      table: arkivmateriale
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: titel
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: titel
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: Titel
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: titel
+      table: arkivmateriale
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: dato
+    type: date
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: Kun årstal kendt? Skriv det i noter.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations:
+        - language: da-DK
+          translation: Dato
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: dato
+      table: arkivmateriale
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: beskrivelse
+    type: text
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: beskrivelse
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Beskrivelse
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: beskrivelse
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: min_grad
+    type: integer
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: min_grad
+      group: null
+      hidden: false
+      interface: slider
+      note: >-
+        Laveste grad der må se posten (1 = alle medlemmer, 10 = kun højeste
+        grad)
+      options:
+        alwaysShowValue: true
+        maxValue: 10
+        minValue: 1
+        stepInterval: 1
+      readonly: false
+      required: true
+      searchable: true
+      sort: 8
+      special: null
+      translations:
+        - language: da-DK
+          translation: Min. grad
+      validation:
+        _and:
+          - min_grad:
+              _gte: 1
+          - min_grad:
+              _lte: 10
+      validation_message: Graden skal være et helt tal fra 1 til 10
+      width: full
+    schema:
+      name: min_grad
+      table: arkivmateriale
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: noter
+    type: text
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: noter
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 9
+      special: null
+      translations:
+        - language: da-DK
+          translation: Noter
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: noter
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: oprettet
+    type: timestamp
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: oprettet
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 10
+      special:
+        - date-created
+      translations:
+        - language: da-DK
+          translation: Oprettet
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: oprettet
+      table: arkivmateriale
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: opdateret
+    type: timestamp
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: opdateret
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 11
+      special:
+        - date-updated
+      translations:
+        - language: da-DK
+          translation: Opdateret
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: opdateret
+      table: arkivmateriale
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: placering
+    type: integer
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: placering
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{navn}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Placering
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: placering
+      table: arkivmateriale
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: placeringer
+      foreign_key_column: id
+  - collection: arkivmateriale
+    field: filer
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{directus_files_id.title}}'
+      field: filer
+      group: null
+      hidden: false
+      interface: files
+      note: >-
+        Scanninger eller fotos af dokumentet. Tryk på "Upload fil" for at tage
+        et billede med kameraet.
+      options:
+        enableCreate: true
+        enableSelect: true
+        layout: grid
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - files
+      translations:
+        - language: da-DK
+          translation: Filer/scanninger
+      validation: null
+      validation_message: null
+      width: full
+  - collection: arkivmateriale_files
+    field: id
+    type: integer
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: arkivmateriale_files
+      data_type: integer
+      default_value: nextval('arkivmateriale_files_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: arkivmateriale_id
+    type: integer
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: arkivmateriale_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: arkivmateriale_id
+      table: arkivmateriale_files
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+  - collection: arkivmateriale_files
+    field: directus_files_id
+    type: uuid
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: directus_files_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: directus_files_id
+      table: arkivmateriale_files
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: arkivmateriale_files
+    field: sort
+    type: integer
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: sort
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sort
+      table: arkivmateriale_files
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: id
+    type: integer
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: bibliotek
+      data_type: integer
+      default_value: nextval('bibliotek_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: titel
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: titel
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 2
+      special: null
+      translations:
+        - language: da-DK
+          translation: Titel
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: titel
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: forfatter
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: forfatter
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations:
+        - language: da-DK
+          translation: Forfatter
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: forfatter
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: udgivelsesaar
+    type: integer
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: udgivelsesaar
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udgivelsesår
+      validation:
+        _and:
+          - udgivelsesaar:
+              _gte: 1000
+          - udgivelsesaar:
+              _lte: 2100
+      validation_message: Angiv et årstal mellem 1000 og 2100
+      width: half
+    schema:
+      name: udgivelsesaar
+      table: bibliotek
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: udgiver
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: udgiver
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udgiver
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: udgiver
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: isbn
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: isbn
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: ISBN
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: isbn
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: sprog
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Dansk
+            value: dansk
+          - text: Engelsk
+            value: engelsk
+          - text: Tysk
+            value: tysk
+          - text: Svensk
+            value: svensk
+          - text: Norsk
+            value: norsk
+          - text: Latin
+            value: latin
+          - text: Andet
+            value: andet
+        showAsDot: false
+      field: sprog
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Dansk
+            value: dansk
+          - text: Engelsk
+            value: engelsk
+          - text: Tysk
+            value: tysk
+          - text: Svensk
+            value: svensk
+          - text: Norsk
+            value: norsk
+          - text: Latin
+            value: latin
+          - text: Andet
+            value: andet
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special: null
+      translations:
+        - language: da-DK
+          translation: Sprog
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: sprog
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: antal_eksemplarer
+    type: integer
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: antal_eksemplarer
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 8
+      special: null
+      translations:
+        - language: da-DK
+          translation: Antal eksemplarer
+      validation:
+        antal_eksemplarer:
+          _gte: 1
+      validation_message: Mindst 1 eksemplar
+      width: half
+    schema:
+      name: antal_eksemplarer
+      table: bibliotek
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: status
+    type: string
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: På hylden
+            value: paa_hylden
+          - text: Udlånt
+            value: udlaant
+        showAsDot: false
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: På hylden
+            value: paa_hylden
+          - text: Udlånt
+            value: udlaant
+      readonly: false
+      required: true
+      searchable: true
+      sort: 9
+      special: null
+      translations:
+        - language: da-DK
+          translation: Status
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: status
+      table: bibliotek
+      data_type: character varying
+      default_value: paa_hylden
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: min_grad
+    type: integer
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: min_grad
+      group: null
+      hidden: false
+      interface: slider
+      note: >-
+        Laveste grad der må se posten (1 = alle medlemmer, 10 = kun højeste
+        grad)
+      options:
+        alwaysShowValue: true
+        maxValue: 10
+        minValue: 1
+        stepInterval: 1
+      readonly: false
+      required: true
+      searchable: true
+      sort: 11
+      special: null
+      translations:
+        - language: da-DK
+          translation: Min. grad
+      validation:
+        _and:
+          - min_grad:
+              _gte: 1
+          - min_grad:
+              _lte: 10
+      validation_message: Graden skal være et helt tal fra 1 til 10
+      width: full
+    schema:
+      name: min_grad
+      table: bibliotek
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: noter
+    type: text
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: noter
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 12
+      special: null
+      translations:
+        - language: da-DK
+          translation: Noter
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: noter
+      table: bibliotek
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: oprettet
+    type: timestamp
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: oprettet
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 13
+      special:
+        - date-created
+      translations:
+        - language: da-DK
+          translation: Oprettet
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: oprettet
+      table: bibliotek
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: opdateret
+    type: timestamp
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: opdateret
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 14
+      special:
+        - date-updated
+      translations:
+        - language: da-DK
+          translation: Opdateret
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: opdateret
+      table: bibliotek
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: placering
+    type: integer
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: placering
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{navn}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 10
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Placering
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: placering
+      table: bibliotek
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: placeringer
+      foreign_key_column: id
+  - collection: bibliotek
+    field: omslagsbillede
+    type: uuid
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: image
+      display_options: null
+      field: omslagsbillede
+      group: null
+      hidden: false
+      interface: file-image
+      note: Tag et billede af omslaget med kameraet eller vælg fra galleriet
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - file
+      translations:
+        - language: da-DK
+          translation: Omslagsbillede
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: omslagsbillede
+      table: bibliotek
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: directus_files
+    field: i_genstande
+    type: alias
+    meta:
+      collection: directus_files
+      conditions: null
+      display: null
+      display_options: null
+      field: i_genstande
+      group: null
+      hidden: true
+      interface: list-o2m
+      note: >-
+        Bruges til at styre adgang: filen følger graden på posterne i
+        genstande_files
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Bruges i genstande
+      validation: null
+      validation_message: null
+      width: full
+  - collection: directus_files
+    field: i_arkivmateriale
+    type: alias
+    meta:
+      collection: directus_files
+      conditions: null
+      display: null
+      display_options: null
+      field: i_arkivmateriale
+      group: null
+      hidden: true
+      interface: list-o2m
+      note: >-
+        Bruges til at styre adgang: filen følger graden på posterne i
+        arkivmateriale_files
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Bruges i arkivmateriale
+      validation: null
+      validation_message: null
+      width: full
+  - collection: directus_files
+    field: i_bibliotek
+    type: alias
+    meta:
+      collection: directus_files
+      conditions: null
+      display: null
+      display_options: null
+      field: i_bibliotek
+      group: null
+      hidden: true
+      interface: list-o2m
+      note: 'Bruges til at styre adgang: filen følger graden på bogen'
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Bruges i bibliotek
+      validation: null
+      validation_message: null
+      width: full
+  - collection: directus_users
+    field: grad
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: grad
+      group: null
+      hidden: false
+      interface: slider
+      note: >-
+        Brugerens grad (1-10). Medlemmer ser kun poster hvor "Min. grad" er lig
+        med eller under deres egen grad.
+      options:
+        alwaysShowValue: true
+        maxValue: 10
+        minValue: 1
+        stepInterval: 1
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations:
+        - language: da-DK
+          translation: Grad
+      validation:
+        _and:
+          - grad:
+              _gte: 1
+          - grad:
+              _lte: 10
+      validation_message: Graden skal være et helt tal fra 1 til 10
+      width: full
+    schema:
+      name: grad
+      table: directus_users
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: id
+    type: integer
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: genstande
+      data_type: integer
+      default_value: nextval('genstande_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: inventarnummer
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: inventarnummer
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 2
+      special: null
+      translations:
+        - language: da-DK
+          translation: Inventarnummer
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: inventarnummer
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: status
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: I arkiv
+            value: i_arkiv
+          - text: Udstillet
+            value: udstillet
+          - text: Udlånt
+            value: udlaant
+        showAsDot: false
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: I arkiv
+            value: i_arkiv
+          - text: Udstillet
+            value: udstillet
+          - text: Udlånt
+            value: udlaant
+      readonly: false
+      required: true
+      searchable: true
+      sort: 3
+      special: null
+      translations:
+        - language: da-DK
+          translation: Status
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: status
+      table: genstande
+      data_type: character varying
+      default_value: i_arkiv
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: titel
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: titel
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: Titel
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: titel
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: beskrivelse
+    type: text
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: beskrivelse
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations:
+        - language: da-DK
+          translation: Beskrivelse
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: beskrivelse
+      table: genstande
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: kategori
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Regalier
+            value: regalier
+          - text: Dokumenter
+            value: dokumenter
+          - text: Møbler/inventar
+            value: moebler_inventar
+          - text: Fotografier
+            value: fotografier
+          - text: Andet
+            value: andet
+        showAsDot: false
+      field: kategori
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: Regalier
+            value: regalier
+          - text: Dokumenter
+            value: dokumenter
+          - text: Møbler/inventar
+            value: moebler_inventar
+          - text: Fotografier
+            value: fotografier
+          - text: Andet
+            value: andet
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Kategori
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: kategori
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: datering
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: datering
+      group: null
+      hidden: false
+      interface: input
+      note: Fx "ca. 1890" eller "1920-1930"
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special: null
+      translations:
+        - language: da-DK
+          translation: Datering
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: datering
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: materiale
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: materiale
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 8
+      special: null
+      translations:
+        - language: da-DK
+          translation: Materiale
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: materiale
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: maal
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: maal
+      group: null
+      hidden: false
+      interface: input
+      note: Fx "H 45 × B 30 × D 20 cm"
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 9
+      special: null
+      translations:
+        - language: da-DK
+          translation: Mål
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: maal
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: stand
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Fremragende
+            value: fremragende
+          - text: God
+            value: god
+          - text: Acceptabel
+            value: acceptabel
+          - text: Dårlig
+            value: darlig
+          - text: Skrøbelig – kræver konservering
+            value: skroebelig
+        showAsDot: false
+      field: stand
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: Fremragende
+            value: fremragende
+          - text: God
+            value: god
+          - text: Acceptabel
+            value: acceptabel
+          - text: Dårlig
+            value: darlig
+          - text: Skrøbelig – kræver konservering
+            value: skroebelig
+      readonly: false
+      required: false
+      searchable: true
+      sort: 10
+      special: null
+      translations:
+        - language: da-DK
+          translation: Stand
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: stand
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: proveniens
+    type: text
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: proveniens
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: Oprindelse og giver
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 11
+      special: null
+      translations:
+        - language: da-DK
+          translation: Proveniens
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: proveniens
+      table: genstande
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: min_grad
+    type: integer
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: min_grad
+      group: null
+      hidden: false
+      interface: slider
+      note: >-
+        Laveste grad der må se posten (1 = alle medlemmer, 10 = kun højeste
+        grad)
+      options:
+        alwaysShowValue: true
+        maxValue: 10
+        minValue: 1
+        stepInterval: 1
+      readonly: false
+      required: true
+      searchable: true
+      sort: 13
+      special: null
+      translations:
+        - language: da-DK
+          translation: Min. grad
+      validation:
+        _and:
+          - min_grad:
+              _gte: 1
+          - min_grad:
+              _lte: 10
+      validation_message: Graden skal være et helt tal fra 1 til 10
+      width: full
+    schema:
+      name: min_grad
+      table: genstande
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: noter
+    type: text
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: noter
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 14
+      special: null
+      translations:
+        - language: da-DK
+          translation: Noter
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: noter
+      table: genstande
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: oprettet
+    type: timestamp
+    meta:
+      collection: genstande
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: oprettet
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 15
+      special:
+        - date-created
+      translations:
+        - language: da-DK
+          translation: Oprettet
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: oprettet
+      table: genstande
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: opdateret
+    type: timestamp
+    meta:
+      collection: genstande
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: opdateret
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 16
+      special:
+        - date-updated
+      translations:
+        - language: da-DK
+          translation: Opdateret
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: opdateret
+      table: genstande
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: placering
+    type: integer
+    meta:
+      collection: genstande
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: placering
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{navn}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 12
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Placering
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: placering
+      table: genstande
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: placeringer
+      foreign_key_column: id
+  - collection: genstande
+    field: billeder
+    type: alias
+    meta:
+      collection: genstande
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{directus_files_id.title}}'
+      field: billeder
+      group: null
+      hidden: false
+      interface: files
+      note: >-
+        Tryk på "Upload fil" for at tage et billede med kameraet eller vælge fra
+        galleriet. Første billede er hovedbilledet.
+      options:
+        enableCreate: true
+        enableSelect: true
+        layout: grid
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - files
+      translations:
+        - language: da-DK
+          translation: Billeder
+      validation: null
+      validation_message: null
+      width: full
+  - collection: genstande_files
+    field: id
+    type: integer
+    meta:
+      collection: genstande_files
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: genstande_files
+      data_type: integer
+      default_value: nextval('genstande_files_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande_files
+    field: genstande_id
+    type: integer
+    meta:
+      collection: genstande_files
+      conditions: null
+      display: null
+      display_options: null
+      field: genstande_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: genstande_id
+      table: genstande_files
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: genstande
+      foreign_key_column: id
+  - collection: genstande_files
+    field: directus_files_id
+    type: uuid
+    meta:
+      collection: genstande_files
+      conditions: null
+      display: null
+      display_options: null
+      field: directus_files_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: directus_files_id
+      table: genstande_files
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: genstande_files
+    field: sort
+    type: integer
+    meta:
+      collection: genstande_files
+      conditions: null
+      display: null
+      display_options: null
+      field: sort
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sort
+      table: genstande_files
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: id
+    type: integer
+    meta:
+      collection: placeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: placeringer
+      data_type: integer
+      default_value: nextval('placeringer_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: navn
+    type: string
+    meta:
+      collection: placeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: navn
+      group: null
+      hidden: false
+      interface: input
+      note: Fx "Reol 2" eller "Skab 2, hylde 3"
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 1
+      special: null
+      translations:
+        - language: da-DK
+          translation: Navn
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: navn
+      table: placeringer
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: type
+    type: string
+    meta:
+      collection: placeringer
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Rum
+            value: rum
+          - text: Reol
+            value: reol
+          - text: Montre
+            value: montre
+          - text: Væg
+            value: vaeg
+          - text: Skab
+            value: skab
+          - text: Hylde
+            value: hylde
+          - text: Kasse/skuffe
+            value: kasse
+          - text: Andet
+            value: andet
+        showAsDot: false
+      field: type
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: Rum
+            value: rum
+          - text: Reol
+            value: reol
+          - text: Montre
+            value: montre
+          - text: Væg
+            value: vaeg
+          - text: Skab
+            value: skab
+          - text: Hylde
+            value: hylde
+          - text: Kasse/skuffe
+            value: kasse
+          - text: Andet
+            value: andet
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations:
+        - language: da-DK
+          translation: Type
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: type
+      table: placeringer
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: beskrivelse
+    type: text
+    meta:
+      collection: placeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: beskrivelse
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: Beskrivelse
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: beskrivelse
+      table: placeringer
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: overordnet
+    type: integer
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: overordnet
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: Fx reolen en hylde står i, eller rummet en reol står i
+      options:
+        template: '{{navn}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Overordnet placering
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: overordnet
+      table: placeringer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: placeringer
+      foreign_key_column: id
+  - collection: placeringer
+    field: underordnede
+    type: alias
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: underordnede
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{type}}: {{navn}}'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Indeholder
+      validation: null
+      validation_message: null
+      width: full
+  - collection: placeringer
+    field: indhold_genstande
+    type: alias
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{inventarnummer}} – {{titel}}'
+      field: indhold_genstande
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{inventarnummer}} – {{titel}}'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 6
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Genstande her
+      validation: null
+      validation_message: null
+      width: full
+  - collection: placeringer
+    field: indhold_arkivmateriale
+    type: alias
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{arkivnummer}} – {{titel}}'
+      field: indhold_arkivmateriale
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{arkivnummer}} – {{titel}}'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 7
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Arkivmateriale her
+      validation: null
+      validation_message: null
+      width: full
+  - collection: placeringer
+    field: indhold_bibliotek
+    type: alias
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{titel}}'
+      field: indhold_bibliotek
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{titel}}'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 8
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Bøger her
+      validation: null
+      validation_message: null
+      width: full
+systemFields:
+  - collection: directus_activity
+    field: timestamp
+    schema:
+      is_indexed: true
+  - collection: directus_revisions
+    field: activity
+    schema:
+      is_indexed: true
+  - collection: directus_revisions
+    field: parent
+    schema:
+      is_indexed: true
+relations:
+  - collection: arkivmateriale
+    field: placering
+    related_collection: placeringer
+    meta:
+      junction_field: null
+      many_collection: arkivmateriale
+      many_field: placering
+      one_allowed_collections: null
+      one_collection: placeringer
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: indhold_arkivmateriale
+      sort_field: null
+    schema:
+      table: arkivmateriale
+      column: placering
+      foreign_key_table: placeringer
+      foreign_key_column: id
+      constraint_name: arkivmateriale_placering_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: arkivmateriale_files
+    field: arkivmateriale_id
+    related_collection: arkivmateriale
+    meta:
+      junction_field: directus_files_id
+      many_collection: arkivmateriale_files
+      many_field: arkivmateriale_id
+      one_allowed_collections: null
+      one_collection: arkivmateriale
+      one_collection_field: null
+      one_deselect_action: delete
+      one_field: filer
+      sort_field: sort
+    schema:
+      table: arkivmateriale_files
+      column: arkivmateriale_id
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+      constraint_name: arkivmateriale_files_arkivmateriale_id_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: arkivmateriale_files
+    field: directus_files_id
+    related_collection: directus_files
+    meta:
+      junction_field: arkivmateriale_id
+      many_collection: arkivmateriale_files
+      many_field: directus_files_id
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: i_arkivmateriale
+      sort_field: null
+    schema:
+      table: arkivmateriale_files
+      column: directus_files_id
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: arkivmateriale_files_directus_files_id_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: bibliotek
+    field: placering
+    related_collection: placeringer
+    meta:
+      junction_field: null
+      many_collection: bibliotek
+      many_field: placering
+      one_allowed_collections: null
+      one_collection: placeringer
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: indhold_bibliotek
+      sort_field: null
+    schema:
+      table: bibliotek
+      column: placering
+      foreign_key_table: placeringer
+      foreign_key_column: id
+      constraint_name: bibliotek_placering_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: bibliotek
+    field: omslagsbillede
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: bibliotek
+      many_field: omslagsbillede
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: i_bibliotek
+      sort_field: null
+    schema:
+      table: bibliotek
+      column: omslagsbillede
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: bibliotek_omslagsbillede_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: genstande
+    field: placering
+    related_collection: placeringer
+    meta:
+      junction_field: null
+      many_collection: genstande
+      many_field: placering
+      one_allowed_collections: null
+      one_collection: placeringer
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: indhold_genstande
+      sort_field: null
+    schema:
+      table: genstande
+      column: placering
+      foreign_key_table: placeringer
+      foreign_key_column: id
+      constraint_name: genstande_placering_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: genstande_files
+    field: genstande_id
+    related_collection: genstande
+    meta:
+      junction_field: directus_files_id
+      many_collection: genstande_files
+      many_field: genstande_id
+      one_allowed_collections: null
+      one_collection: genstande
+      one_collection_field: null
+      one_deselect_action: delete
+      one_field: billeder
+      sort_field: sort
+    schema:
+      table: genstande_files
+      column: genstande_id
+      foreign_key_table: genstande
+      foreign_key_column: id
+      constraint_name: genstande_files_genstande_id_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: genstande_files
+    field: directus_files_id
+    related_collection: directus_files
+    meta:
+      junction_field: genstande_id
+      many_collection: genstande_files
+      many_field: directus_files_id
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: i_genstande
+      sort_field: null
+    schema:
+      table: genstande_files
+      column: directus_files_id
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: genstande_files_directus_files_id_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: placeringer
+    field: overordnet
+    related_collection: placeringer
+    meta:
+      junction_field: null
+      many_collection: placeringer
+      many_field: overordnet
+      one_allowed_collections: null
+      one_collection: placeringer
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: underordnede
+      sort_field: null
+    schema:
+      table: placeringer
+      column: overordnet
+      foreign_key_table: placeringer
+      foreign_key_column: id
+      constraint_name: placeringer_overordnet_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL

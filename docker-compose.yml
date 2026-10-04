@@ -1,0 +1,99 @@
+# Logearkiv (PoC) - Directus + PostgreSQL.
+# Alle værdier kommer fra .env (oprettes af ./setup.sh). Ingen hemmeligheder her.
+name: logearkiv
+
+services:
+  database:
+    image: postgres:16.15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ${DATA_DIR:-./data}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Ingen porte udadtil: databasen er kun nået fra directus via det interne netværk.
+
+  directus:
+    image: directus/directus:11.17.4
+    restart: unless-stopped
+    # Kør som værtens bruger, så bind mounts under ./data er skrivbare uden chmod 777.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    ports:
+      - "${DIRECTUS_PORT:-8055}:8055"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ${DATA_DIR:-./data}/uploads:/directus/uploads
+      - ./schema:/directus/schema:ro
+    environment:
+      # Hemmeligheder og admin (bootstrap ved første start)
+      KEY: ${KEY}
+      SECRET: ${SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
+      # Database
+      DB_CLIENT: pg
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # Adresse som mobilen bruger (LAN-adresse + videresendt port, se README)
+      PUBLIC_URL: ${PUBLIC_URL}
+
+      # Filer: lokal lagring i bind mount, max uploadstørrelse
+      STORAGE_LOCATIONS: local
+      STORAGE_LOCAL_DRIVER: local
+      STORAGE_LOCAL_ROOT: /directus/uploads
+      FILES_MAX_UPLOAD_SIZE: ${FILES_MAX_UPLOAD_SIZE:-50MB}
+      # Kun billeder og PDF (scanninger). Directus bruger listen som accept-attribut på filvælgeren,
+      # så mobilen tilbyder kameraet ("image/*"). Udvid i .env hvis I også skal have andre filtyper.
+      FILES_MIME_TYPE_ALLOW_LIST: ${FILES_MIME_TYPE_ALLOW_LIST:-image/*,application/pdf}
+
+      # Billedtransformation (thumbnails) - mobilfotos på 4-8 MB skal ikke sendes i fuld størrelse til listevisning
+      # Over grænsen svarer Directus 503 "Server too busy" i stedet for at sætte i kø. Browseren henter ca. 6
+      # thumbnails ad gangen, så grænsen skal ligge over det. Sænk den kun hvis maskinen løber tør for RAM.
+      ASSETS_TRANSFORM_MAX_CONCURRENT: 10
+      ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION: 6000
+      ASSETS_TRANSFORM_TIMEOUT: 30s
+
+      # Ingen eksterne kald i denne omgang
+      TELEMETRY: "false"
+
+      # Over HTTP på LAN. Sættes til true, når Caddy/HTTPS er på plads.
+      SESSION_COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      REFRESH_TOKEN_COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8055/server/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # Engangsværktøj til provisionering (datamodel, roller, testdata). Startes ikke af "up".
+  # Bruges via scripts/provision.sh.
+  tools:
+    image: directus/directus:11.17.4
+    profiles: ["tools"]
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    entrypoint: ["node"]
+    working_dir: /bootstrap
+    volumes:
+      - ./bootstrap:/bootstrap:ro
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      TESTBRUGER_PASSWORD: ${TESTBRUGER_PASSWORD:-}
+    depends_on:
+      directus:
+        condition: service_healthy
