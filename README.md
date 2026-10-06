@@ -18,6 +18,8 @@ Status: **proof of concept** (version 0.1.0). Kører på en Chromebook (Chrome O
 | `scripts/backup.sh`, `restore.sh` | Backup og gendannelse |
 | `scripts/snapshot.sh` | Eksporterer datamodellen til `schema/snapshot.yaml` |
 | `extensions-src/foto/`, `extensions/` | Directus-modulet "Tag billede" (kildekode og bygget udgave) |
+| `extensions/directus-extension-nummer/` | Hook: automatiske numre, validering af placeringskoder (ren JS, ingen build) |
+| `extensions-src/placering-vaelger/`, `extensions-src/placering-ny/` | Trin-for-trin-vælger til placering og siden "Ny placering" (kildekode; bygget udgave i `extensions/`) |
 | `bootstrap/` | Node-scripts, som `provision.sh` og `verify.sh` kører i en engangs-container |
 | `data/`, `backup/`, `.env` | Database, uploads, backups og hemmeligheder. Ligger **ikke** i git |
 
@@ -74,6 +76,18 @@ docker compose up -d --wait
 - Testbrugere efter `--seed`: `medlem1@logearkiv.example.com` (grad 1), `medlem5@logearkiv.example.com` (grad 5) og `arkivar@logearkiv.example.com`. Kodeordet er `TESTBRUGER_PASSWORD` i `.env`.
 - Første admin-login viser en Directus-dialog om projektejer og BSL 1.1-vilkår. Den skal I selv tage stilling til; *Remind Later* lukker den uden at acceptere noget.
 - Testposterne (`TEST-…`) og testbrugerne skal slettes før rigtig brug.
+
+## Placeringer og numre
+
+- Hver placering har en **kode** (A-Z og tal, unik på samme niveau), fx `FV`, `M1`, `H2`, `BV`.
+- Siden **Ny placering** i menuen opretter en placering og dens hylder/bagvæg i ét hug: vælg hvor den skal ligge, type, navn og kode,
+  antal hylder og om der skal være bagvæg. Hylderne får koderne `H1`, `H2` … og bagvæggen `BV`.
+- Ved registrering af genstande, arkivmateriale og bøger vælges placeringen **trin for trin** (rum → montre → hylde).
+- Genstande og arkivmateriale får **automatisk nummer** efter placeringen: `FV-M1-H2-003` = Forværelse → Montre 1 → Hylde 2 → nr. 3.
+  Løbenummeret tælles på tværs af genstande og arkivmateriale, så numrene er unikke. Nummerfeltet er skrivebeskyttet.
+- **Flyttes** en post, eller ændres kode/overordnet på en placering, **regnes numrene nedenunder om**. Det gamle nummer er derefter ugyldigt,
+  så nye labels skal skrives ved flytning. Alle koder på stien skal være udfyldt, ellers afvises posten.
+- Poster med eksplicit nummer og uden placering (testdata, import) lades urørte. `POST /nummer/omnummerer` (kun admin) regner alle poster om.
 
 ## Modulet "Tag billede"
 

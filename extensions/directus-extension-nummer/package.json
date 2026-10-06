@@ -1,0 +1,7 @@
+{
+  "name": "directus-extension-nummer",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "directus:extension": { "type": "hook", "path": "index.js", "source": "index.js", "host": "^11.0.0" }
+}

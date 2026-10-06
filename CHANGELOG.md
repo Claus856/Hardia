@@ -2,6 +2,20 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [0.3.0] - 2026-10-06
+
+### Tilføjet
+- Koder på placeringer og typen "Bagvæg". Koder valideres (A-Z/tal, unikke blandt søskende, ingen løkker i træet).
+- Siden "Ny placering": opretter en placering med et valgfrit antal hylder og bagvæg i ét hug.
+- Trin-for-trin-vælger til placering på genstande, arkivmateriale og bibliotek.
+- Automatiske numre efter placeringstræet (`FV-M1-H2-003`) for genstande og arkivmateriale; numrene regnes om, når en post flyttes, eller en placerings kode/overordnet ændres.
+
+### Ændret
+- Nummerfelterne er skrivebeskyttede, og placering er påkrævet på genstande og arkivmateriale.
+
+### Kendt
+- `verify.sh` forventer præcis seed-dataens filer og fejler, hvis der er uploadet andre testfotos.
+
 ## [0.2.0] - 2026-10-06
 
 ### Tilføjet
