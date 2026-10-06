@@ -32,6 +32,7 @@ services:
     volumes:
       - ${DATA_DIR:-./data}/uploads:/directus/uploads
       - ./schema:/directus/schema:ro
+      - ./extensions:/directus/extensions:ro
     environment:
       # Hemmeligheder og admin (bootstrap ved første start)
       KEY: ${KEY}

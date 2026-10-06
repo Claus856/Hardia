@@ -357,12 +357,12 @@ async function main() {
   await addFileGallery(api, {
     main: 'genstande', junction: 'genstande_files', aliasName: 'billeder', aliasLabel: 'Billeder',
     filesBackref: 'i_genstande', backrefLabel: 'Bruges i genstande', sort: 1,
-    note: 'Tryk på "Upload fil" for at tage et billede med kameraet eller vælge fra galleriet. Første billede er hovedbilledet.',
+    note: 'Brug "Tag billede" i menuen til at tage billeder med kameraet. Her kan du også vælge billeder fra galleriet. Første billede er hovedbilledet.',
   });
   await addFileGallery(api, {
     main: 'arkivmateriale', junction: 'arkivmateriale_files', aliasName: 'filer', aliasLabel: 'Filer/scanninger',
     filesBackref: 'i_arkivmateriale', backrefLabel: 'Bruges i arkivmateriale', sort: 1,
-    note: 'Scanninger eller fotos af dokumentet. Tryk på "Upload fil" for at tage et billede med kameraet.',
+    note: 'Scanninger eller fotos af dokumentet. Brug "Tag billede" i menuen til at tage billeder med kameraet.',
   });
 
   // bibliotek: enkelt omslagsbillede (også øverst)

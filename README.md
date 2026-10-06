@@ -17,6 +17,7 @@ Status: **proof of concept** (version 0.1.0). Kører på en Chromebook (Chrome O
 | `scripts/verify.sh` | Automatisk test af roller, grad-filtrering og fil-beskyttelse |
 | `scripts/backup.sh`, `restore.sh` | Backup og gendannelse |
 | `scripts/snapshot.sh` | Eksporterer datamodellen til `schema/snapshot.yaml` |
+| `extensions-src/foto/`, `extensions/` | Directus-modulet "Tag billede" (kildekode og bygget udgave) |
 | `bootstrap/` | Node-scripts, som `provision.sh` og `verify.sh` kører i en engangs-container |
 | `data/`, `backup/`, `.env` | Database, uploads, backups og hemmeligheder. Ligger **ikke** i git |
 
@@ -74,6 +75,17 @@ docker compose up -d --wait
 - Første admin-login viser en Directus-dialog om projektejer og BSL 1.1-vilkår. Den skal I selv tage stilling til; *Remind Later* lukker den uden at acceptere noget.
 - Testposterne (`TEST-…`) og testbrugerne skal slettes før rigtig brug.
 
+## Modulet "Tag billede"
+
+Egen side i Directus' menu (`/admin/foto`) til at fotografere direkte på en post: vælg placering (rum → montre → hylde), vælg
+genstanden eller arkivmaterialet, tryk **Tag billede**. Kameraet åbner, og billedet uploades og knyttes til posten.
+Posterne viser thumbnail og antal billeder; søgning på nummer eller titel virker på tværs af placeringer.
+
+- Modulet skal slås til under Indstillinger → Projektindstillinger → Moduler (nye udvidelser er slået fra som standard).
+- Poster uden placering kan kun findes via søgning.
+- Kildekoden bygges med `cd extensions-src/foto && npm install && npm run build`; kopiér derefter `dist/` til
+  `extensions/directus-extension-foto/` og kør `docker compose restart directus`.
+
 ## Tjekliste på mobil
 
 Mobilen skal være på samme Wi-Fi som Chromebooken.
@@ -81,7 +93,7 @@ Mobilen skal være på samme Wi-Fi som Chromebooken.
 - [ ] `http://<adresse>:8055` åbner login-siden
 - [ ] Login som `medlem1`: kun grad 1-poster og deres billeder er synlige
 - [ ] Login som `medlem5`: grad 1- og 5-poster er synlige, grad 8 er ikke
-- [ ] Login som `arkivar`: opret en genstand, og tryk på billedfeltet – filvælgeren tilbyder kameraet
+- [ ] Login som `arkivar`: åbn "Tag billede", vælg placering og genstand, og tryk på **Tag billede** – kameraet åbner direkte
 - [ ] Tag et foto og gem; billedet vises i listen som thumbnail og i posten i fuld visning
 - [ ] Et foto taget på højkant vises på højkant
 - [ ] Hæv postens `min_grad`, og bekræft som `medlem1`, at billedet er væk

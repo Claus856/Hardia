@@ -2,6 +2,18 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [0.2.0] - 2026-10-06
+
+### Tilføjet
+- Directus-modul "Tag billede": vælg placering → post → tag billede med mobilens kamera, så det knyttes direkte til posten. Viser thumbnails og antal billeder på posterne.
+- Docker Compose monterer `./extensions` i Directus.
+
+### Ændret
+- Hjælpeteksten på billedfelterne henviser til "Tag billede" i stedet for "Upload fil".
+
+### Testet
+- Modulet på mobil (kamera, upload og tilknytning) og i headless browser (navigation, thumbnails).
+
 ## [0.1.0] - 2026-10-04
 
 Første proof of concept.

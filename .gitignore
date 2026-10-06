@@ -7,3 +7,6 @@ data-*/
 backup/
 node_modules/
 *.log
+extensions-src/*/node_modules/
+extensions-src/*/.npm/
+extensions-src/*/dist/

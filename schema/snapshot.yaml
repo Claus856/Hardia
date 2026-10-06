@@ -701,8 +701,8 @@ fields:
       hidden: false
       interface: files
       note: >-
-        Scanninger eller fotos af dokumentet. Tryk på "Upload fil" for at tage
-        et billede med kameraet.
+        Scanninger eller fotos af dokumentet. Brug "Tag billede" i menuen til at
+        tage billeder med kameraet.
       options:
         enableCreate: true
         enableSelect: true
@@ -2478,8 +2478,8 @@ fields:
       hidden: false
       interface: files
       note: >-
-        Tryk på "Upload fil" for at tage et billede med kameraet eller vælge fra
-        galleriet. Første billede er hovedbilledet.
+        Brug "Tag billede" i menuen til at tage billeder med kameraet. Her kan du
+        også vælge billeder fra galleriet. Første billede er hovedbilledet.
       options:
         enableCreate: true
         enableSelect: true
