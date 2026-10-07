@@ -2,7 +2,7 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
-## [Ikke udgivet]
+## [1.0.0] - 2026-10-08
 
 ### Tilføjet
 - Siden "Ny placering": afkrydsningen "Med underskab" opretter et underskab (kode `US`) sammen med placeringen.

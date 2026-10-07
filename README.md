@@ -4,7 +4,7 @@ Arkivsystem til en loge, bygget på [Directus](https://directus.io) 11.17.4 og P
 Registrering af genstande, arkivmateriale og bibliotek med billeder/scanninger, hvor hver post har en
 mindste-grad (`min_grad`), og et medlem kun ser de poster og filer, som medlemmets egen grad giver adgang til.
 
-Status: **proof of concept** (version 0.1.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
+Status: **proof of concept** (version 1.0.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
 
 ## Indhold
 
