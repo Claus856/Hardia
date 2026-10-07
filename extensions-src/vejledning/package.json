@@ -1,0 +1,9 @@
+{
+  "name": "directus-extension-vejledning",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "directus:extension": { "type": "module", "path": "dist/index.js", "source": "src/index.js", "host": "^11.0.0" },
+  "scripts": { "build": "directus-extension build" },
+  "devDependencies": { "@directus/extensions-sdk": "11.0.0" }
+}

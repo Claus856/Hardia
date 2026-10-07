@@ -2,6 +2,7 @@
 // - Nye poster får nummeret ud fra deres placering.
 // - Flyttes en post, eller ændres kode/overordnet på en placering, regnes nummeret om.
 // - Koder på placeringer valideres (kun A-Z/0-9, unikke blandt søskende, ingen løkker i træet).
+// - Hver placering får sin fulde kodesti (sti) og en sorteringsnøgle (sortering), så listen kan stå i træorden.
 // Samme opbygning som @directus/errors' createError (pakken kan ikke importeres herfra), så Directus viser beskeden.
 class Fejl extends Error {
   name = 'DirectusError';
@@ -72,7 +73,29 @@ async function regnPlaceringerOm(db, placeringIds) {
   return antal;
 }
 
+/** Skriver sti (FV-M1-BV) og sortering (FV-M0001-BV, så M2 kommer før M10) på de givne placeringer. */
+async function opdaterStier(db, ids) {
+  for (const start of ids) {
+    const koder = [];
+    let id = start;
+    for (let n = 0; id != null && n <= 25; n++) {
+      const r = await db('placeringer').select('kode', 'overordnet').where({ id }).first();
+      if (!r) break;
+      koder.unshift(r.kode || '?');
+      id = r.overordnet;
+    }
+    await db('placeringer').where({ id: start }).update({
+      sti: koder.join('-'),
+      sortering: koder.map((k) => k.replace(/\d+/g, (t) => t.padStart(4, '0'))).join('-'),
+    });
+  }
+}
+const alleStier = async (db) => opdaterStier(db, (await db('placeringer').select('id')).map((p) => p.id));
+
 export default ({ filter, action, init }, { database, logger }) => {
+  // Ved opstart: regn alle stier igennem (dækker ældre placeringer; før kolonnerne findes, fejler det blot med en advarsel).
+  alleStier(database).catch((e) => logger.warn(`Kodestier på placeringer blev ikke opdateret: ${e.message}`));
+
   // Nye poster
   for (const [tabel, kol] of Object.entries(TABELLER)) {
     filter(`${tabel}.items.create`, async (payload, _meta, ctx) => {
@@ -117,12 +140,20 @@ export default ({ filter, action, init }, { database, logger }) => {
     for (const id of meta.keys) await valider(ctx.database ?? database, id, payload);
     return payload;
   });
-  // Placeringer: ændret kode/overordnet -> nye numre på alt nedenunder
+  action('placeringer.items.create', async ({ key }) => {
+    try { await opdaterStier(database, [key]); }
+    catch (e) { logger.error(`Kodesti for placering ${key} fejlede: ${e.message}`); }
+  });
+  // Placeringer: ændret kode/overordnet -> ny sti og nye numre på alt nedenunder
   action('placeringer.items.update', async ({ payload, keys }) => {
     if (!payload || (payload.kode === undefined && payload.overordnet === undefined)) return;
     try {
       let antal = 0;
-      for (const id of keys) antal += await regnPlaceringerOm(database, await undertraeIds(database, id));
+      for (const id of keys) {
+        const ids = await undertraeIds(database, id);
+        await opdaterStier(database, ids);
+        antal += await regnPlaceringerOm(database, ids);
+      }
       if (antal) logger.info(`Omnummererede ${antal} poster efter ændring af placering.`);
     } catch (e) { logger.error(`Omnummerering fejlede: ${e.message}`); }
   });
@@ -132,6 +163,7 @@ export default ({ filter, action, init }, { database, logger }) => {
     app.post('/nummer/omnummerer', async (req, res) => {
       if (!req.accountability?.admin) return res.status(403).json({ errors: [{ message: 'Kun administrator.' }] });
       try {
+        await alleStier(database);
         const alle = await database('placeringer').select('id');
         res.json({ data: { omnummereret: await regnPlaceringerOm(database, alle.map((p) => p.id)) } });
       } catch (e) { res.status(400).json({ errors: [{ message: e.message }] }); }

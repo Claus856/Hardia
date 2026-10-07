@@ -1659,6 +1659,70 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: directus_roles
+    field: skjul_i_menu
+    type: json
+    meta:
+      collection: directus_roles
+      conditions: null
+      display: null
+      display_options: null
+      field: skjul_i_menu
+      group: null
+      hidden: false
+      interface: select-multiple-checkbox
+      note: >-
+        Afkrydsede menupunkter skjules for brugere med denne rolle. Gælder ikke
+        administratorer. Det styrer kun menuen, ikke rettighederne.
+      options:
+        choices:
+          - text: Indhold
+            value: content
+          - text: Søg
+            value: soeg
+          - text: Vejledning
+            value: vejledning
+          - text: Brugermappe
+            value: users
+          - text: Filbibliotek
+            value: files
+          - text: Insights
+            value: insights
+          - text: Dokumentation
+            value: docs
+          - text: Tag billede
+            value: foto
+          - text: Ny placering
+            value: ny-placering
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - cast-json
+      translations:
+        - language: da-DK
+          translation: Skjul i menuen
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: skjul_i_menu
+      table: directus_roles
+      data_type: json
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: directus_users
     field: grad
     type: integer
@@ -1771,7 +1835,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 2
+      sort: 14
       special: null
       translations:
         - language: da-DK
@@ -1871,7 +1935,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 4
+      sort: 2
       special: null
       translations:
         - language: da-DK
@@ -1979,7 +2043,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 7
       special: null
       translations:
         - language: da-DK
@@ -2021,7 +2085,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 7
+      sort: 8
       special: null
       translations:
         - language: da-DK
@@ -2063,7 +2127,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 8
+      sort: 9
       special: null
       translations:
         - language: da-DK
@@ -2105,7 +2169,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 9
+      sort: 10
       special: null
       translations:
         - language: da-DK
@@ -2171,7 +2235,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 11
       special: null
       translations:
         - language: da-DK
@@ -2213,7 +2277,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 11
+      sort: 12
       special: null
       translations:
         - language: da-DK
@@ -2261,7 +2325,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 13
+      sort: 4
       special: null
       translations:
         - language: da-DK
@@ -2273,7 +2337,7 @@ fields:
           - min_grad:
               _lte: 10
       validation_message: Graden skal være et helt tal fra 1 til 10
-      width: full
+      width: half
     schema:
       name: min_grad
       table: genstande
@@ -2308,7 +2372,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 14
+      sort: 15
       special: null
       translations:
         - language: da-DK
@@ -2351,7 +2415,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 15
+      sort: 16
       special:
         - date-created
       translations:
@@ -2395,7 +2459,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 16
+      sort: 17
       special:
         - date-updated
       translations:
@@ -2439,7 +2503,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 12
+      sort: 1
       special:
         - m2o
       translations:
@@ -2488,7 +2552,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 1
+      sort: 13
       special:
         - files
       translations:
@@ -2497,6 +2561,1050 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: genstande
+    field: land
+    type: string
+    meta:
+      collection: genstande
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Danmark
+            value: DK
+          - text: Norge
+            value: 'NO'
+          - text: Sverige
+            value: SE
+          - text: Tyskland
+            value: DE
+          - text: Afghanistan
+            value: AF
+          - text: Albanien
+            value: AL
+          - text: Algeriet
+            value: DZ
+          - text: Amerikansk Samoa
+            value: AS
+          - text: Amerikanske oversøiske øer
+            value: UM
+          - text: Andorra
+            value: AD
+          - text: Angola
+            value: AO
+          - text: Anguilla
+            value: AI
+          - text: Antarktis
+            value: AQ
+          - text: Antigua og Barbuda
+            value: AG
+          - text: Argentina
+            value: AR
+          - text: Armenien
+            value: AM
+          - text: Aruba
+            value: AW
+          - text: Aserbajdsjan
+            value: AZ
+          - text: Australien
+            value: AU
+          - text: Bahamas
+            value: BS
+          - text: Bahrain
+            value: BH
+          - text: Bangladesh
+            value: BD
+          - text: Barbados
+            value: BB
+          - text: Belarus
+            value: BY
+          - text: Belgien
+            value: BE
+          - text: Belize
+            value: BZ
+          - text: Benin
+            value: BJ
+          - text: Bermuda
+            value: BM
+          - text: Bhutan
+            value: BT
+          - text: Bolivia
+            value: BO
+          - text: Bosnien-Hercegovina
+            value: BA
+          - text: Botswana
+            value: BW
+          - text: Bouvetøen
+            value: BV
+          - text: Brasilien
+            value: BR
+          - text: Brunei
+            value: BN
+          - text: Bulgarien
+            value: BG
+          - text: Burkina Faso
+            value: BF
+          - text: Burundi
+            value: BI
+          - text: Cambodja
+            value: KH
+          - text: Cameroun
+            value: CM
+          - text: Canada
+            value: CA
+          - text: Caymanøerne
+            value: KY
+          - text: Chile
+            value: CL
+          - text: Cocosøerne
+            value: CC
+          - text: Colombia
+            value: CO
+          - text: Comorerne
+            value: KM
+          - text: Congo-Brazzaville
+            value: CG
+          - text: Congo-Kinshasa
+            value: CD
+          - text: Cookøerne
+            value: CK
+          - text: Costa Rica
+            value: CR
+          - text: Cuba
+            value: CU
+          - text: Curaçao
+            value: CW
+          - text: Cypern
+            value: CY
+          - text: De Amerikanske Jomfruøer
+            value: VI
+          - text: De Britiske Jomfruøer
+            value: VG
+          - text: De Forenede Arabiske Emirater
+            value: AE
+          - text: De Franske Besiddelser i Det Sydlige Indiske Ocean og Antarktis
+            value: TF
+          - text: De palæstinensiske områder
+            value: PS
+          - text: De tidligere Nederlandske Antiller
+            value: BQ
+          - text: Den Centralafrikanske Republik
+            value: CF
+          - text: Den Dominikanske Republik
+            value: DO
+          - text: Det Britiske Territorium i Det Indiske Ocean
+            value: IO
+          - text: Djibouti
+            value: DJ
+          - text: Dominica
+            value: DM
+          - text: Ecuador
+            value: EC
+          - text: Egypten
+            value: EG
+          - text: El Salvador
+            value: SV
+          - text: Elfenbenskysten
+            value: CI
+          - text: Eritrea
+            value: ER
+          - text: Estland
+            value: EE
+          - text: Eswatini
+            value: SZ
+          - text: Etiopien
+            value: ET
+          - text: Falklandsøerne
+            value: FK
+          - text: Fiji
+            value: FJ
+          - text: Filippinerne
+            value: PH
+          - text: Finland
+            value: FI
+          - text: Frankrig
+            value: FR
+          - text: Fransk Guyana
+            value: GF
+          - text: Fransk Polynesien
+            value: PF
+          - text: Færøerne
+            value: FO
+          - text: Gabon
+            value: GA
+          - text: Gambia
+            value: GM
+          - text: Georgien
+            value: GE
+          - text: Ghana
+            value: GH
+          - text: Gibraltar
+            value: GI
+          - text: Grenada
+            value: GD
+          - text: Grækenland
+            value: GR
+          - text: Grønland
+            value: GL
+          - text: Guadeloupe
+            value: GP
+          - text: Guam
+            value: GU
+          - text: Guatemala
+            value: GT
+          - text: Guernsey
+            value: GG
+          - text: Guinea
+            value: GN
+          - text: Guinea-Bissau
+            value: GW
+          - text: Guyana
+            value: GY
+          - text: Haiti
+            value: HT
+          - text: Heard Island og McDonald Islands
+            value: HM
+          - text: Honduras
+            value: HN
+          - text: Indien
+            value: IN
+          - text: Indonesien
+            value: ID
+          - text: Irak
+            value: IQ
+          - text: Iran
+            value: IR
+          - text: Irland
+            value: IE
+          - text: Island
+            value: IS
+          - text: Isle of Man
+            value: IM
+          - text: Israel
+            value: IL
+          - text: Italien
+            value: IT
+          - text: Jamaica
+            value: JM
+          - text: Japan
+            value: JP
+          - text: Jersey
+            value: JE
+          - text: Jordan
+            value: JO
+          - text: Juleøen
+            value: CX
+          - text: Kap Verde
+            value: CV
+          - text: Kasakhstan
+            value: KZ
+          - text: Kenya
+            value: KE
+          - text: Kina
+            value: CN
+          - text: Kirgisistan
+            value: KG
+          - text: Kiribati
+            value: KI
+          - text: Kosovo
+            value: XK
+          - text: Kroatien
+            value: HR
+          - text: Kuwait
+            value: KW
+          - text: Laos
+            value: LA
+          - text: Lesotho
+            value: LS
+          - text: Letland
+            value: LV
+          - text: Libanon
+            value: LB
+          - text: Liberia
+            value: LR
+          - text: Libyen
+            value: LY
+          - text: Liechtenstein
+            value: LI
+          - text: Litauen
+            value: LT
+          - text: Luxembourg
+            value: LU
+          - text: Madagaskar
+            value: MG
+          - text: Malawi
+            value: MW
+          - text: Malaysia
+            value: MY
+          - text: Maldiverne
+            value: MV
+          - text: Mali
+            value: ML
+          - text: Malta
+            value: MT
+          - text: Marokko
+            value: MA
+          - text: Marshalløerne
+            value: MH
+          - text: Martinique
+            value: MQ
+          - text: Mauretanien
+            value: MR
+          - text: Mauritius
+            value: MU
+          - text: Mayotte
+            value: YT
+          - text: Mexico
+            value: MX
+          - text: Mikronesien
+            value: FM
+          - text: Moldova
+            value: MD
+          - text: Monaco
+            value: MC
+          - text: Mongoliet
+            value: MN
+          - text: Montenegro
+            value: ME
+          - text: Montserrat
+            value: MS
+          - text: Mozambique
+            value: MZ
+          - text: Myanmar (Burma)
+            value: MM
+          - text: Namibia
+            value: NA
+          - text: Nauru
+            value: NR
+          - text: Nederlandene
+            value: NL
+          - text: Nepal
+            value: NP
+          - text: New Zealand
+            value: NZ
+          - text: Nicaragua
+            value: NI
+          - text: Niger
+            value: NE
+          - text: Nigeria
+            value: NG
+          - text: Niue
+            value: NU
+          - text: Nordkorea
+            value: KP
+          - text: Nordmakedonien
+            value: MK
+          - text: Nordmarianerne
+            value: MP
+          - text: Norfolk Island
+            value: NF
+          - text: Ny Kaledonien
+            value: NC
+          - text: Oman
+            value: OM
+          - text: Pakistan
+            value: PK
+          - text: Palau
+            value: PW
+          - text: Panama
+            value: PA
+          - text: Papua Ny Guinea
+            value: PG
+          - text: Paraguay
+            value: PY
+          - text: Peru
+            value: PE
+          - text: Pitcairn
+            value: PN
+          - text: Polen
+            value: PL
+          - text: Portugal
+            value: PT
+          - text: Puerto Rico
+            value: PR
+          - text: Qatar
+            value: QA
+          - text: Réunion
+            value: RE
+          - text: Rumænien
+            value: RO
+          - text: Rusland
+            value: RU
+          - text: Rwanda
+            value: RW
+          - text: Saint Barthélemy
+            value: BL
+          - text: Saint Kitts og Nevis
+            value: KN
+          - text: Saint Lucia
+            value: LC
+          - text: Saint Martin
+            value: MF
+          - text: Saint Pierre og Miquelon
+            value: PM
+          - text: Saint Vincent og Grenadinerne
+            value: VC
+          - text: Salomonøerne
+            value: SB
+          - text: Samoa
+            value: WS
+          - text: San Marino
+            value: SM
+          - text: São Tomé og Príncipe
+            value: ST
+          - text: SAR Hongkong
+            value: HK
+          - text: SAR Macao
+            value: MO
+          - text: Saudi-Arabien
+            value: SA
+          - text: Schweiz
+            value: CH
+          - text: Senegal
+            value: SN
+          - text: Serbien
+            value: RS
+          - text: Seychellerne
+            value: SC
+          - text: Sierra Leone
+            value: SL
+          - text: Singapore
+            value: SG
+          - text: Sint Maarten
+            value: SX
+          - text: Slovakiet
+            value: SK
+          - text: Slovenien
+            value: SI
+          - text: Somalia
+            value: SO
+          - text: South Georgia og De Sydlige Sandwichøer
+            value: GS
+          - text: Spanien
+            value: ES
+          - text: Sri Lanka
+            value: LK
+          - text: St. Helena
+            value: SH
+          - text: Storbritannien
+            value: GB
+          - text: Sudan
+            value: SD
+          - text: Surinam
+            value: SR
+          - text: Svalbard og Jan Mayen
+            value: SJ
+          - text: Sydafrika
+            value: ZA
+          - text: Sydkorea
+            value: KR
+          - text: Sydsudan
+            value: SS
+          - text: Syrien
+            value: SY
+          - text: Tadsjikistan
+            value: TJ
+          - text: Taiwan
+            value: TW
+          - text: Tanzania
+            value: TZ
+          - text: Tchad
+            value: TD
+          - text: Thailand
+            value: TH
+          - text: Timor-Leste
+            value: TL
+          - text: Tjekkiet
+            value: CZ
+          - text: Togo
+            value: TG
+          - text: Tokelau
+            value: TK
+          - text: Tonga
+            value: TO
+          - text: Trinidad og Tobago
+            value: TT
+          - text: Tunesien
+            value: TN
+          - text: Turkmenistan
+            value: TM
+          - text: Turks- og Caicosøerne
+            value: TC
+          - text: Tuvalu
+            value: TV
+          - text: Tyrkiet
+            value: TR
+          - text: Uganda
+            value: UG
+          - text: Ukraine
+            value: UA
+          - text: Ungarn
+            value: HU
+          - text: Uruguay
+            value: UY
+          - text: USA
+            value: US
+          - text: Usbekistan
+            value: UZ
+          - text: Vanuatu
+            value: VU
+          - text: Vatikanstaten
+            value: VA
+          - text: Venezuela
+            value: VE
+          - text: Vestsahara
+            value: EH
+          - text: Vietnam
+            value: VN
+          - text: Wallis og Futuna
+            value: WF
+          - text: Yemen
+            value: YE
+          - text: Zambia
+            value: ZM
+          - text: Zimbabwe
+            value: ZW
+          - text: Ækvatorialguinea
+            value: GQ
+          - text: Østrig
+            value: AT
+          - text: Åland
+            value: AX
+      field: land
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Danmark
+            value: DK
+          - text: Norge
+            value: 'NO'
+          - text: Sverige
+            value: SE
+          - text: Tyskland
+            value: DE
+          - text: Afghanistan
+            value: AF
+          - text: Albanien
+            value: AL
+          - text: Algeriet
+            value: DZ
+          - text: Amerikansk Samoa
+            value: AS
+          - text: Amerikanske oversøiske øer
+            value: UM
+          - text: Andorra
+            value: AD
+          - text: Angola
+            value: AO
+          - text: Anguilla
+            value: AI
+          - text: Antarktis
+            value: AQ
+          - text: Antigua og Barbuda
+            value: AG
+          - text: Argentina
+            value: AR
+          - text: Armenien
+            value: AM
+          - text: Aruba
+            value: AW
+          - text: Aserbajdsjan
+            value: AZ
+          - text: Australien
+            value: AU
+          - text: Bahamas
+            value: BS
+          - text: Bahrain
+            value: BH
+          - text: Bangladesh
+            value: BD
+          - text: Barbados
+            value: BB
+          - text: Belarus
+            value: BY
+          - text: Belgien
+            value: BE
+          - text: Belize
+            value: BZ
+          - text: Benin
+            value: BJ
+          - text: Bermuda
+            value: BM
+          - text: Bhutan
+            value: BT
+          - text: Bolivia
+            value: BO
+          - text: Bosnien-Hercegovina
+            value: BA
+          - text: Botswana
+            value: BW
+          - text: Bouvetøen
+            value: BV
+          - text: Brasilien
+            value: BR
+          - text: Brunei
+            value: BN
+          - text: Bulgarien
+            value: BG
+          - text: Burkina Faso
+            value: BF
+          - text: Burundi
+            value: BI
+          - text: Cambodja
+            value: KH
+          - text: Cameroun
+            value: CM
+          - text: Canada
+            value: CA
+          - text: Caymanøerne
+            value: KY
+          - text: Chile
+            value: CL
+          - text: Cocosøerne
+            value: CC
+          - text: Colombia
+            value: CO
+          - text: Comorerne
+            value: KM
+          - text: Congo-Brazzaville
+            value: CG
+          - text: Congo-Kinshasa
+            value: CD
+          - text: Cookøerne
+            value: CK
+          - text: Costa Rica
+            value: CR
+          - text: Cuba
+            value: CU
+          - text: Curaçao
+            value: CW
+          - text: Cypern
+            value: CY
+          - text: De Amerikanske Jomfruøer
+            value: VI
+          - text: De Britiske Jomfruøer
+            value: VG
+          - text: De Forenede Arabiske Emirater
+            value: AE
+          - text: De Franske Besiddelser i Det Sydlige Indiske Ocean og Antarktis
+            value: TF
+          - text: De palæstinensiske områder
+            value: PS
+          - text: De tidligere Nederlandske Antiller
+            value: BQ
+          - text: Den Centralafrikanske Republik
+            value: CF
+          - text: Den Dominikanske Republik
+            value: DO
+          - text: Det Britiske Territorium i Det Indiske Ocean
+            value: IO
+          - text: Djibouti
+            value: DJ
+          - text: Dominica
+            value: DM
+          - text: Ecuador
+            value: EC
+          - text: Egypten
+            value: EG
+          - text: El Salvador
+            value: SV
+          - text: Elfenbenskysten
+            value: CI
+          - text: Eritrea
+            value: ER
+          - text: Estland
+            value: EE
+          - text: Eswatini
+            value: SZ
+          - text: Etiopien
+            value: ET
+          - text: Falklandsøerne
+            value: FK
+          - text: Fiji
+            value: FJ
+          - text: Filippinerne
+            value: PH
+          - text: Finland
+            value: FI
+          - text: Frankrig
+            value: FR
+          - text: Fransk Guyana
+            value: GF
+          - text: Fransk Polynesien
+            value: PF
+          - text: Færøerne
+            value: FO
+          - text: Gabon
+            value: GA
+          - text: Gambia
+            value: GM
+          - text: Georgien
+            value: GE
+          - text: Ghana
+            value: GH
+          - text: Gibraltar
+            value: GI
+          - text: Grenada
+            value: GD
+          - text: Grækenland
+            value: GR
+          - text: Grønland
+            value: GL
+          - text: Guadeloupe
+            value: GP
+          - text: Guam
+            value: GU
+          - text: Guatemala
+            value: GT
+          - text: Guernsey
+            value: GG
+          - text: Guinea
+            value: GN
+          - text: Guinea-Bissau
+            value: GW
+          - text: Guyana
+            value: GY
+          - text: Haiti
+            value: HT
+          - text: Heard Island og McDonald Islands
+            value: HM
+          - text: Honduras
+            value: HN
+          - text: Indien
+            value: IN
+          - text: Indonesien
+            value: ID
+          - text: Irak
+            value: IQ
+          - text: Iran
+            value: IR
+          - text: Irland
+            value: IE
+          - text: Island
+            value: IS
+          - text: Isle of Man
+            value: IM
+          - text: Israel
+            value: IL
+          - text: Italien
+            value: IT
+          - text: Jamaica
+            value: JM
+          - text: Japan
+            value: JP
+          - text: Jersey
+            value: JE
+          - text: Jordan
+            value: JO
+          - text: Juleøen
+            value: CX
+          - text: Kap Verde
+            value: CV
+          - text: Kasakhstan
+            value: KZ
+          - text: Kenya
+            value: KE
+          - text: Kina
+            value: CN
+          - text: Kirgisistan
+            value: KG
+          - text: Kiribati
+            value: KI
+          - text: Kosovo
+            value: XK
+          - text: Kroatien
+            value: HR
+          - text: Kuwait
+            value: KW
+          - text: Laos
+            value: LA
+          - text: Lesotho
+            value: LS
+          - text: Letland
+            value: LV
+          - text: Libanon
+            value: LB
+          - text: Liberia
+            value: LR
+          - text: Libyen
+            value: LY
+          - text: Liechtenstein
+            value: LI
+          - text: Litauen
+            value: LT
+          - text: Luxembourg
+            value: LU
+          - text: Madagaskar
+            value: MG
+          - text: Malawi
+            value: MW
+          - text: Malaysia
+            value: MY
+          - text: Maldiverne
+            value: MV
+          - text: Mali
+            value: ML
+          - text: Malta
+            value: MT
+          - text: Marokko
+            value: MA
+          - text: Marshalløerne
+            value: MH
+          - text: Martinique
+            value: MQ
+          - text: Mauretanien
+            value: MR
+          - text: Mauritius
+            value: MU
+          - text: Mayotte
+            value: YT
+          - text: Mexico
+            value: MX
+          - text: Mikronesien
+            value: FM
+          - text: Moldova
+            value: MD
+          - text: Monaco
+            value: MC
+          - text: Mongoliet
+            value: MN
+          - text: Montenegro
+            value: ME
+          - text: Montserrat
+            value: MS
+          - text: Mozambique
+            value: MZ
+          - text: Myanmar (Burma)
+            value: MM
+          - text: Namibia
+            value: NA
+          - text: Nauru
+            value: NR
+          - text: Nederlandene
+            value: NL
+          - text: Nepal
+            value: NP
+          - text: New Zealand
+            value: NZ
+          - text: Nicaragua
+            value: NI
+          - text: Niger
+            value: NE
+          - text: Nigeria
+            value: NG
+          - text: Niue
+            value: NU
+          - text: Nordkorea
+            value: KP
+          - text: Nordmakedonien
+            value: MK
+          - text: Nordmarianerne
+            value: MP
+          - text: Norfolk Island
+            value: NF
+          - text: Ny Kaledonien
+            value: NC
+          - text: Oman
+            value: OM
+          - text: Pakistan
+            value: PK
+          - text: Palau
+            value: PW
+          - text: Panama
+            value: PA
+          - text: Papua Ny Guinea
+            value: PG
+          - text: Paraguay
+            value: PY
+          - text: Peru
+            value: PE
+          - text: Pitcairn
+            value: PN
+          - text: Polen
+            value: PL
+          - text: Portugal
+            value: PT
+          - text: Puerto Rico
+            value: PR
+          - text: Qatar
+            value: QA
+          - text: Réunion
+            value: RE
+          - text: Rumænien
+            value: RO
+          - text: Rusland
+            value: RU
+          - text: Rwanda
+            value: RW
+          - text: Saint Barthélemy
+            value: BL
+          - text: Saint Kitts og Nevis
+            value: KN
+          - text: Saint Lucia
+            value: LC
+          - text: Saint Martin
+            value: MF
+          - text: Saint Pierre og Miquelon
+            value: PM
+          - text: Saint Vincent og Grenadinerne
+            value: VC
+          - text: Salomonøerne
+            value: SB
+          - text: Samoa
+            value: WS
+          - text: San Marino
+            value: SM
+          - text: São Tomé og Príncipe
+            value: ST
+          - text: SAR Hongkong
+            value: HK
+          - text: SAR Macao
+            value: MO
+          - text: Saudi-Arabien
+            value: SA
+          - text: Schweiz
+            value: CH
+          - text: Senegal
+            value: SN
+          - text: Serbien
+            value: RS
+          - text: Seychellerne
+            value: SC
+          - text: Sierra Leone
+            value: SL
+          - text: Singapore
+            value: SG
+          - text: Sint Maarten
+            value: SX
+          - text: Slovakiet
+            value: SK
+          - text: Slovenien
+            value: SI
+          - text: Somalia
+            value: SO
+          - text: South Georgia og De Sydlige Sandwichøer
+            value: GS
+          - text: Spanien
+            value: ES
+          - text: Sri Lanka
+            value: LK
+          - text: St. Helena
+            value: SH
+          - text: Storbritannien
+            value: GB
+          - text: Sudan
+            value: SD
+          - text: Surinam
+            value: SR
+          - text: Svalbard og Jan Mayen
+            value: SJ
+          - text: Sydafrika
+            value: ZA
+          - text: Sydkorea
+            value: KR
+          - text: Sydsudan
+            value: SS
+          - text: Syrien
+            value: SY
+          - text: Tadsjikistan
+            value: TJ
+          - text: Taiwan
+            value: TW
+          - text: Tanzania
+            value: TZ
+          - text: Tchad
+            value: TD
+          - text: Thailand
+            value: TH
+          - text: Timor-Leste
+            value: TL
+          - text: Tjekkiet
+            value: CZ
+          - text: Togo
+            value: TG
+          - text: Tokelau
+            value: TK
+          - text: Tonga
+            value: TO
+          - text: Trinidad og Tobago
+            value: TT
+          - text: Tunesien
+            value: TN
+          - text: Turkmenistan
+            value: TM
+          - text: Turks- og Caicosøerne
+            value: TC
+          - text: Tuvalu
+            value: TV
+          - text: Tyrkiet
+            value: TR
+          - text: Uganda
+            value: UG
+          - text: Ukraine
+            value: UA
+          - text: Ungarn
+            value: HU
+          - text: Uruguay
+            value: UY
+          - text: USA
+            value: US
+          - text: Usbekistan
+            value: UZ
+          - text: Vanuatu
+            value: VU
+          - text: Vatikanstaten
+            value: VA
+          - text: Venezuela
+            value: VE
+          - text: Vestsahara
+            value: EH
+          - text: Vietnam
+            value: VN
+          - text: Wallis og Futuna
+            value: WF
+          - text: Yemen
+            value: YE
+          - text: Zambia
+            value: ZM
+          - text: Zimbabwe
+            value: ZW
+          - text: Ækvatorialguinea
+            value: GQ
+          - text: Østrig
+            value: AT
+          - text: Åland
+            value: AX
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Land
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: land
+      table: genstande
+      data_type: character varying
+      default_value: DK
+      max_length: 2
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: genstande_files
     field: id
     type: integer
@@ -3065,6 +4173,88 @@ fields:
       is_nullable: true
       is_unique: false
       is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: sti
+    type: string
+    meta:
+      collection: placeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: sti
+      group: null
+      hidden: false
+      interface: input
+      note: Udfyldes automatisk ud fra koderne op gennem træet
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations:
+        - language: da-DK
+          translation: Fuld kode
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: sti
+      table: placeringer
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: placeringer
+    field: sortering
+    type: string
+    meta:
+      collection: placeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: sortering
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 9
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sortering
+      table: placeringer
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
       is_primary_key: false
       is_generated: false
       generation_expression: null

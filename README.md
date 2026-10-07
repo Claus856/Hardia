@@ -20,6 +20,9 @@ Status: **proof of concept** (version 0.1.0). Kører på en Chromebook (Chrome O
 | `extensions-src/foto/`, `extensions/` | Directus-modulet "Tag billede" (kildekode og bygget udgave) |
 | `extensions/directus-extension-nummer/` | Hook: automatiske numre, validering af placeringskoder (ren JS, ingen build) |
 | `extensions-src/placering-vaelger/`, `extensions-src/placering-ny/` | Trin-for-trin-vælger til placering og siden "Ny placering" (kildekode; bygget udgave i `extensions/`) |
+| `extensions/directus-extension-menu/` | Skjuler menupunkter pr. rolle; vælges under Indstillinger → Brugerroller → "Skjul i menuen" (ren JS, ingen build) |
+| `extensions-src/vejledning/` | Modulet "Vejledning": brugervejledning tilpasset brugerens rettigheder. Teksten står i `AFSNIT` øverst i `src/index.js` |
+| `extensions-src/soeg/` | Modulet "Søg": søgning på tværs af genstande, arkiv og bibliotek (kildekode; bygget udgave i `extensions/`) |
 | `bootstrap/` | Node-scripts, som `provision.sh` og `verify.sh` kører i en engangs-container |
 | `data/`, `backup/`, `.env` | Database, uploads, backups og hemmeligheder. Ligger **ikke** i git |
 
@@ -80,8 +83,13 @@ docker compose up -d --wait
 ## Placeringer og numre
 
 - Hver placering har en **kode** (A-Z og tal, unik på samme niveau), fx `FV`, `M1`, `H2`, `BV`.
-- Siden **Ny placering** i menuen opretter en placering og dens hylder/bagvæg i ét hug: vælg hvor den skal ligge, type, navn og kode,
-  antal hylder og om der skal være bagvæg. Hylderne får koderne `H1`, `H2` … og bagvæggen `BV`.
+- Siden **Ny placering** i menuen opretter en placering og dens hylder/bagvæg/underskab i ét hug: vælg hvor den skal ligge, type, navn og kode,
+  antal hylder og om der skal være bagvæg og/eller underskab. Hylderne får koderne `H1`, `H2` …, bagvæggen `BV` og underskabet `US`.
+- Listen under Indhold → Placeringer står som standard i træorden med den fulde kode (`FV-M1-BV`) i første kolonne.
+  Felterne `sti` og `sortering` vedligeholdes automatisk af udvidelsen `nummer`.
+- Siden **Søg** i menuen søger i genstande, arkivmateriale og bibliotek på én gang. Søgningen kan afgrænses til én samling,
+  til en placering (inkl. alt under den) og til ét bestemt felt. Rullelister søges på deres tekst ("tysk" finder Tyskland),
+  flere ord skal alle findes, og et medlem finder kun de poster, medlemmets grad giver adgang til.
 - Ved registrering af genstande, arkivmateriale og bøger vælges placeringen **trin for trin** (rum → montre → hylde).
 - Genstande og arkivmateriale får **automatisk nummer** efter placeringen: `FV-M1-H2-003` = Forværelse → Montre 1 → Hylde 2 → nr. 3.
   Løbenummeret tælles på tværs af genstande og arkivmateriale, så numrene er unikke. Nummerfeltet er skrivebeskyttet.

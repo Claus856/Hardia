@@ -55,6 +55,29 @@ await api('PATCH', '/settings', {
 });
 console.log('= indstillinger');
 
+// --- Standardvisning: placeringer står i træorden (sortering vedligeholdes af udvidelsen "nummer") -------------
+const placeringVisning = {
+  collection: 'placeringer', layout: 'tabular',
+  layout_query: { tabular: { sort: ['sortering'], fields: ['sti', 'navn', 'type', 'overordnet'] } },
+};
+const globale = await api('GET', '/presets?filter[collection][_eq]=placeringer&filter[user][_null]=true&filter[role][_null]=true&filter[bookmark][_null]=true&limit=1');
+if (globale.length) await api('PATCH', `/presets/${globale[0].id}`, placeringVisning);
+else await api('POST', '/presets', placeringVisning);
+console.log('= standardvisning for placeringer');
+
+// --- Menuen: nye moduler er slået fra som standard. Søg og Vejledning skal stå lige efter Indhold. -------------
+// (På en helt frisk installation er module_bar tom; slå da modulerne til under Indstillinger -> Projektindstillinger.)
+const { module_bar: menu } = await api('GET', '/settings?fields=module_bar');
+if (Array.isArray(menu)) {
+  for (const id of ['vejledning', 'soeg']) {
+    const punkt = menu.find((m) => m.id === id);
+    if (punkt) punkt.enabled = true;
+    else menu.splice(menu.findIndex((m) => m.id === 'content') + 1, 0, { type: 'module', id, enabled: true });
+  }
+  await api('PATCH', '/settings', { module_bar: menu });
+  console.log('= modulerne Søg og Vejledning er slået til');
+}
+
 // --- Policies og roller ----------------------------------------------------------------------------------------
 const arkivarPolicy = await upsertByName('policies', 'Arkivar', {
   icon: 'edit_note', description: 'Opret og redigér i alle collections', app_access: true, admin_access: false,
@@ -64,8 +87,16 @@ const medlemPolicy = await upsertByName('policies', 'Medlem', {
 });
 const arkivar = await upsertByName('roles', 'Arkivar', { icon: 'edit_note', description: 'Registrerer og redigerer arkivet' });
 const medlem = await upsertByName('roles', 'Medlem', { icon: 'visibility', description: 'Læser det grad tillader' });
+// Menupunkter, der skjules pr. rolle (udvidelsen "menu"). Kun startværdier: administratoren retter dem siden
+// under Indstillinger -> Brugerroller, og et valg dér overskrives ikke her.
+for (const [rolle, skjul] of [[arkivar, ['users', 'docs']], [medlem, ['users', 'files', 'docs']]]) {
+  if (rolle.skjul_i_menu == null) await api('PATCH', `/roles/${rolle.id}`, { skjul_i_menu: skjul });
+}
 await ensureAccess(arkivar.id, arkivarPolicy.id);
 await ensureAccess(medlem.id, medlemPolicy.id);
+
+// Alle må skifte deres eget kodeord - og kun det: grad, rolle og e-mail kan kun en administrator ændre.
+const EGET_KODEORD = { collection: 'directus_users', action: 'update', fields: ['password'], permissions: { id: { _eq: '$CURRENT_USER' } } };
 
 // --- Arkivar: opret + redigér (ikke slet, jf. kravet). Junction-rækker skal kunne slettes for at fjerne et billede
 //     fra en post uden at slette selve filen. -------------------------------------------------------------------
@@ -76,6 +107,7 @@ const arkivarRows = [
     ['create', 'read', 'update', 'delete'].map((action) => ({ collection, action }))),
   ...['create', 'read', 'update'].map((action) => ({ collection: 'directus_files', action })),
   { collection: 'directus_folders', action: 'read' },
+  EGET_KODEORD,
 ];
 await setPermissions(arkivarPolicy.id, arkivarRows);
 console.log(`= Arkivar: ${arkivarRows.length} rettigheder`);
@@ -84,6 +116,7 @@ console.log(`= Arkivar: ${arkivarRows.length} rettigheder`);
 const medlemRows = [
   ...MAIN.map((collection) => ({ collection, action: 'read', permissions: GRAD_OK })),
   { collection: 'placeringer', action: 'read' },
+  EGET_KODEORD,
   { collection: 'directus_folders', action: 'read' }, // ellers fejler fil-modulet med en "Forbudt"-dialog
   // Junction-rækkerne røber hvilke filer der hører til en post, så de følger postens grad.
   ...Object.entries(JUNCTIONS).map(([collection, parentField]) => ({

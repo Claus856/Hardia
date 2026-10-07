@@ -132,4 +132,10 @@ export default {
   name: 'Tag billede',
   icon: 'photo_camera',
   routes: [{ path: '', component: Foto }],
+  // Skjules for dem, der ikke må oprette (fx Medlem), så de ikke møder en fejl ved gem.
+  preRegisterCheck(user, rettigheder) {
+    if (user.admin_access) return true;
+    const a = rettigheder.directus_files?.create?.access;
+    return a === 'partial' || a === 'full';
+  },
 };

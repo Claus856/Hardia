@@ -1,7 +1,7 @@
 import { defineComponent, h, ref, computed, onMounted, resolveComponent } from 'vue';
 import { useApi } from '@directus/extensions-sdk';
 
-// Opret en placering (fx en montre) og dens hylder/bagvæg på én gang.
+// Opret en placering (fx en montre) og dens hylder/bagvæg/underskab på én gang.
 const TYPER = [['rum', 'Rum'], ['montre', 'Montre'], ['skab', 'Skab'], ['reol', 'Reol'], ['vaeg', 'Væg'], ['hylde', 'Hylde'], ['kasse', 'Kasse/skuffe'], ['andet', 'Andet']];
 const border = '1px solid var(--theme--border-color)';
 const st = {
@@ -26,6 +26,7 @@ const Ny = defineComponent({
     const kodeRørt = ref(false);
     const hylder = ref(0);
     const bagvæg = ref(false);
+    const underskab = ref(false);
     const msg = ref('');
     const busy = ref(false);
 
@@ -37,8 +38,13 @@ const Ny = defineComponent({
     function forslag() {
       if (kodeRørt.value) return;
       const t = TYPER.find((x) => x[0] === type.value);
-      const antal = born(forælder.value).filter((p) => p.type === type.value).length;
-      kode.value = (t[1][0] + (antal + 1)).toUpperCase();
+      // Første ledige nummer: koder kan være rettet i hånden, så antallet af samme type er ikke nok.
+      const søskende = born(forælder.value);
+      const brugt = new Set(søskende.map((p) => (p.kode || '').toUpperCase()));
+      const bogstav = t[1][0].toUpperCase();
+      let n = søskende.filter((p) => p.type === type.value).length + 1;
+      while (brugt.has(bogstav + n)) n++;
+      kode.value = bogstav + n;
     }
     async function load() {
       try { alle.value = (await api.get('/items/placeringer', { params: { fields: ['id', 'navn', 'kode', 'type', 'overordnet'], limit: -1 } })).data.data; forslag(); }
@@ -51,6 +57,7 @@ const Ny = defineComponent({
       const l = [];
       for (let i = 1; i <= Number(hylder.value || 0); i++) l.push({ navn: `Hylde ${i}`, kode: `H${i}`, type: 'hylde' });
       if (bagvæg.value) l.push({ navn: 'Bagvæg', kode: 'BV', type: 'bagvaeg' });
+      if (underskab.value) l.push({ navn: 'Underskab', kode: 'US', type: 'skab' });
       return l;
     };
 
@@ -63,7 +70,7 @@ const Ny = defineComponent({
         const kids = børn().map((b) => ({ ...b, overordnet: p.id }));
         if (kids.length) await api.post('/items/placeringer', kids);
         msg.value = `✓ Oprettet ${kodeFuld(p.kode)} "${p.navn}"${kids.length ? ` med ${kids.length} underplaceringer` : ''}.`;
-        navn.value = ''; kodeRørt.value = false; hylder.value = 0; bagvæg.value = false;
+        navn.value = ''; kodeRørt.value = false; hylder.value = 0; bagvæg.value = false; underskab.value = false;
         await load();
       } catch (e) { msg.value = 'Fejl: ' + fejl(e); }
       finally { busy.value = false; }
@@ -93,6 +100,8 @@ const Ny = defineComponent({
       k.push(h('input', { style: st.input, type: 'number', min: 0, max: 40, value: hylder.value, onInput: (e) => { hylder.value = Math.max(0, Math.min(40, Number(e.target.value))); } }));
       k.push(h('label', { style: 'display:flex;gap:10px;align-items:center;margin-top:14px' }, [
         h('input', { type: 'checkbox', checked: bagvæg.value, style: 'width:22px;height:22px', onChange: (e) => { bagvæg.value = e.target.checked; } }), 'Med bagvæg']));
+      k.push(h('label', { style: 'display:flex;gap:10px;align-items:center;margin-top:14px' }, [
+        h('input', { type: 'checkbox', checked: underskab.value, style: 'width:22px;height:22px', onChange: (e) => { underskab.value = e.target.checked; } }), 'Med underskab']));
 
       // 4) Forhåndsvisning
       const kids = børn();
@@ -108,4 +117,15 @@ const Ny = defineComponent({
   },
 });
 
-export default { id: 'ny-placering', name: 'Ny placering', icon: 'add_location_alt', routes: [{ path: '', component: Ny }] };
+export default {
+  id: 'ny-placering',
+  name: 'Ny placering',
+  icon: 'add_location_alt',
+  routes: [{ path: '', component: Ny }],
+  // Skjules for dem, der ikke må oprette (fx Medlem), så de ikke møder en fejl ved gem.
+  preRegisterCheck(user, rettigheder) {
+    if (user.admin_access) return true;
+    const a = rettigheder.placeringer?.create?.access;
+    return a === 'partial' || a === 'full';
+  },
+};

@@ -2,6 +2,25 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [Ikke udgivet]
+
+### Tilføjet
+- Siden "Ny placering": afkrydsningen "Med underskab" opretter et underskab (kode `US`) sammen med placeringen.
+- Placeringer har felterne `sti` (fuld kode, fx `FV-M1-BV`) og `sortering`, og listen står som standard i træorden.
+- Modulet "Søg": søgning i hele arkivet, som kan afgrænses til samling, placering og felt.
+- Modulet "Vejledning": brugervejledning i menuen, som kun viser de afsnit, den indloggede bruger har brug for (Medlem, Arkivar eller Administrator).
+- Genstande har feltet "Land" (rulleliste med alle lande, standard Danmark), og formularen starter med placering, titel, status, min. grad, beskrivelse og land.
+- `scripts/start.sh` og en genvej i Chrome OS' appstarter, som starter systemet og åbner det i browseren.
+
+### Ændret
+- "Tag billede" og "Ny placering" vises kun i menuen for brugere, der må oprette (Arkivar og Administrator), ikke for Medlem.
+- Menupunkter kan skjules pr. rolle under Indstillinger → Brugerroller → "Skjul i menuen" (udvidelsen `menu`). Fra start: Medlem ser ikke Brugermappe, Filbibliotek og Dokumentation; Arkivar ser ikke Brugermappe og Dokumentation.
+
+- Medlem og Arkivar må skifte deres eget kodeord (og kun det) under deres profil.
+
+### Rettet
+- "Ny placering" foreslår ikke længere en kode, der allerede er brugt på samme niveau.
+
 ## [0.3.0] - 2026-10-06
 
 ### Tilføjet
