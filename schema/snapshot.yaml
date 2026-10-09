@@ -574,7 +574,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 10
+      sort: 14
       special:
         - date-created
       translations:
@@ -618,7 +618,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 11
+      sort: 15
       special:
         - date-updated
       translations:
@@ -720,6 +720,275 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: arkivmateriale
+    field: soegeord
+    type: csv
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: labels
+      display_options: null
+      field: soegeord
+      group: null
+      hidden: false
+      interface: tags
+      note: >-
+        De godkendte søgeord. Skriv dine egne, eller hent forslagene med knappen
+        "Brug foreslåede søgeord" i sidepanelet og fjern dem, der ikke passer.
+      options:
+        iconRight: sell
+        placeholder: Skriv et søgeord og tryk Enter
+      readonly: false
+      required: false
+      searchable: true
+      sort: 10
+      special:
+        - cast-csv
+      translations:
+        - language: da-DK
+          translation: Søgeord
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: soegeord
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: foreslaaede_soegeord
+    type: csv
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: labels
+      display_options: null
+      field: foreslaaede_soegeord
+      group: null
+      hidden: false
+      interface: tags
+      note: >-
+        Maskinforslag ud fra teksten i postens PDF'er. Udfyldes automatisk og
+        kan ikke rettes her.
+      options:
+        iconRight: auto_awesome
+      readonly: true
+      required: false
+      searchable: true
+      sort: 11
+      special:
+        - cast-csv
+      translations:
+        - language: da-DK
+          translation: Foreslåede søgeord
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: foreslaaede_soegeord
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: tekststatus
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: OK
+            value: ok
+          - text: Ingen tekst fundet – kræver OCR
+            value: kraever_ocr
+          - text: Ikke en PDF
+            value: ikke_pdf
+          - text: Fejl
+            value: fejl
+        showAsDot: false
+      field: tekststatus
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: Resultatet af den automatiske tekstudtrækning fra postens PDF'er.
+      options:
+        choices:
+          - text: OK
+            value: ok
+          - text: Ingen tekst fundet – kræver OCR
+            value: kraever_ocr
+          - text: Ikke en PDF
+            value: ikke_pdf
+          - text: Fejl
+            value: fejl
+      readonly: true
+      required: false
+      searchable: true
+      sort: 12
+      special: null
+      translations:
+        - language: da-DK
+          translation: Tekststatus
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: tekststatus
+      table: arkivmateriale
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: tekst_opdateret
+    type: timestamp
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: tekst_opdateret
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 13
+      special: null
+      translations:
+        - language: da-DK
+          translation: Tekst opdateret
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: tekst_opdateret
+      table: arkivmateriale
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: udtrukket_tekst
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: udtrukket_tekst
+      group: null
+      hidden: false
+      interface: group-detail
+      note: null
+      options:
+        headerIcon: article
+        start: closed
+      readonly: false
+      required: false
+      searchable: true
+      sort: 16
+      special:
+        - alias
+        - no-data
+        - group
+      translations:
+        - language: da-DK
+          translation: Udtrukket tekst
+      validation: null
+      validation_message: null
+      width: full
+  - collection: arkivmateriale
+    field: dokumenttekst
+    type: text
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: dokumenttekst
+      group: udtrukket_tekst
+      hidden: false
+      interface: input-multiline
+      note: Teksten fra postens PDF'er (udfyldes automatisk). Der kan søges i den.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations:
+        - language: da-DK
+          translation: Dokumenttekst
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: dokumenttekst
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: arkivmateriale_files
     field: id
     type: integer

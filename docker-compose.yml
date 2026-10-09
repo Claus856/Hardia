@@ -1,4 +1,4 @@
-# Logearkiv (PoC) - Directus + PostgreSQL.
+# Logearkiv (PoC) - Directus + PostgreSQL + tekstservice (PDF-tekst og søgeord).
 # Alle værdier kommer fra .env (oprettes af ./setup.sh). Ingen hemmeligheder her.
 name: logearkiv
 
@@ -80,6 +80,30 @@ services:
       retries: 20
       start_period: 30s
 
+  # Tekstudtræk fra PDF'er (pdftotext) og forslag til søgeord (sjældne ord og egennavne). Kaldes af et Directus-flow, når filerne på
+  # en post i arkivmateriale ændres, og skriver resultatet tilbage som servicebrugeren "Tekstservice" (se README).
+  tekstservice:
+    build: ./tekstservice
+    image: logearkiv-tekstservice
+    restart: unless-stopped
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_TOKEN: ${TEKSTSERVICE_TOKEN:-}
+      TEKST_MAX_FIL_MB: ${TEKST_MAX_FIL_MB:-50}
+      TEKST_MAX_SIDER: ${TEKST_MAX_SIDER:-300}
+      TEKST_TIMEOUT_SEK: ${TEKST_TIMEOUT_SEK:-120}
+    # Hukommelsesloft, så en stor PDF ikke tager hele maskinen. Behandlingen kører én post ad gangen med lav
+    # prioritet (nice), så den bruger højst én kerne. Sæt IKKE "cpus:"/CPU-kvote her: på Chrome OS' Linux-kerne
+    # (6.6) gav den et RCU-stall, der låste alle containere, til kvoten blev fjernet.
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/sundhed', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    # Ingen porte udadtil: tjenesten nås kun fra directus via det interne netværk.
+
   # Engangsværktøj til provisionering (datamodel, roller, testdata). Startes ikke af "up".
   # Bruges via scripts/provision.sh.
   tools:
@@ -95,6 +119,7 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       TESTBRUGER_PASSWORD: ${TESTBRUGER_PASSWORD:-}
+      TEKSTSERVICE_TOKEN: ${TEKSTSERVICE_TOKEN:-}
     depends_on:
       directus:
         condition: service_healthy

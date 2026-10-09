@@ -31,7 +31,8 @@ const AFSNIT = [
       'Uden søgeord vises alt i den valgte samling eller placering, så siden også kan bruges til at se, hvad der står et bestemt sted.',
       'Tryk på et resultat for at åbne posten.',
     ] },
-    'Søgningen dækker ikke datoer eller teksten inde i scannede dokumenter, og talfelter som Udgivelsesår kræver det præcise tal.',
+    'Søgningen dækker også søgeord og teksten inde i PDF-filer på arkivmateriale, når PDF\'en har et tekstlag. Du finder kun tekst i de dokumenter, din grad giver adgang til.',
+    'Søgningen dækker ikke datoer eller teksten i billeder og scannede PDF\'er uden tekstlag, og talfelter som Udgivelsesår kræver det præcise tal.',
   ] },
 
   { t: 'Se poster under Indhold', b: [
@@ -83,6 +84,18 @@ const AFSNIT = [
       'Bøger har ikke noget automatisk nummer. Angiv titel, forfatter og antal eksemplarer, og læg gerne et omslagsbillede på.',
       'Husk Min. grad på hver post.',
     ] },
+  ] },
+
+  { t: 'Søgeord og tekst fra PDF\'er', n: 1, b: [
+    'Når du lægger en PDF på en post i arkivmateriale, læses teksten automatisk ud i løbet af få sekunder. Genindlæs posten for at se resultatet.',
+    { l: [
+      'Tekststatus viser, hvordan det gik: OK, "Ingen tekst fundet – kræver OCR" (en scanning uden tekstlag), "Ikke en PDF" (kun billeder) eller Fejl.',
+      'Udtrukket tekst (nederst, foldet sammen) er den tekst, der kan søges i. Den kan ikke rettes.',
+      'Foreslåede søgeord er maskinens forslag ud fra teksten. De er kun forslag.',
+      'Søgeord er de godkendte søgeord. Skriv dine egne, eller tryk Brug foreslåede søgeord under Flows i sidepanelet til højre: forslagene lægges til dem, du allerede har, og du fjerner selv dem, der ikke passer.',
+      'Udtræk tekst igen (samme sted) læser postens PDF\'er på ny, fx hvis teksten ikke svarer til filerne.',
+    ] },
+    'Bogmærket Kræver OCR under Indhold → Arkivmateriale viser de dokumenter, der ikke kunne læses. Dem kan der kun søges i via titel, beskrivelse og søgeord.',
   ] },
 
   { t: 'Tag billede', n: 1, b: [

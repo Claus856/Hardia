@@ -35,7 +35,8 @@ function soegbart(f) {
   const label = (m.translations || []).find((t) => t.language === 'da-DK')?.translation || f.field;
   const valg = m.options?.choices;
   if (Array.isArray(valg)) return { felt: f.field, label, slags: 'valg', valg, andet: !!m.options.allowOther };
-  if (['string', 'text'].includes(f.type)) return { felt: f.field, label, slags: 'tekst' };
+  // csv = tag-felter (søgeord): gemmes som kommasepareret tekst, så der kan søges i dem som i almindelig tekst.
+  if (['string', 'text', 'csv'].includes(f.type)) return { felt: f.field, label, slags: 'tekst' };
   if (TAL.includes(f.type)) return { felt: f.field, label, slags: 'tal' };
   return null;
 }

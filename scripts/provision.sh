@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Sætter en tom Directus op: datamodel fra schema/snapshot.yaml + indstillinger, roller og rettigheder.
+# Sætter en tom Directus op: datamodel fra schema/snapshot.yaml + indstillinger, roller, rettigheder og
+# tekstudtræk (servicebruger og flows).
 # Idempotent - kan køres igen.
 #   ./scripts/provision.sh           datamodel + roller (brug dette på den rigtige server)
 #   ./scripts/provision.sh --seed    + testbrugere og testposter (kun PoC)
@@ -8,14 +9,16 @@ set -euo pipefail
 [ -s schema/snapshot.yaml ] || { echo "schema/snapshot.yaml mangler eller er tom." >&2; exit 1; }
 
 docker compose up -d --wait
-echo "1/3 Datamodel (schema apply) ..."
+echo "1/4 Datamodel (schema apply) ..."
 docker compose exec -T directus node cli.js schema apply --yes /directus/schema/snapshot.yaml
-echo "2/3 Indstillinger, roller og rettigheder ..."
+echo "2/4 Indstillinger, roller og rettigheder ..."
 docker compose run --rm -T tools configure.mjs
+echo "3/4 Tekstudtræk: servicebruger og flows ..."
+docker compose run --rm -T tools tekst.mjs
 if [ "${1:-}" = "--seed" ]; then
-  echo "3/3 Testbrugere og testposter ..."
+  echo "4/4 Testbrugere og testposter ..."
   docker compose run --rm -T tools seed.mjs
 else
-  echo "3/3 (springer testdata over - brug --seed i PoC)"
+  echo "4/4 (springer testdata over - brug --seed i PoC)"
 fi
 echo "Provisionering færdig."

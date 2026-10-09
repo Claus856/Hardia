@@ -29,15 +29,15 @@ async function ensure(collection, keyField, record) {
 }
 
 // Placeringer (hierarki: rum > reol > hylde)
-const place = async (navn, type, overordnet, beskrivelse) =>
-  ensure('placeringer', 'navn', { navn, type, overordnet, beskrivelse });
-const arkivrum = await place('Arkivrummet', 'rum', null, 'Rummet med arkivskabene');
-const reolA = await place('Reol A', 'reol', arkivrum, 'Ved vinduet');
-const hylde2 = await place('Reol A, hylde 2', 'hylde', reolA, 'Anden hylde fra oven');
-const salen = await place('Udstillingsrummet', 'rum', null, 'Museumsrummet');
-const montre1 = await place('Montre 1', 'montre', salen, 'Ved indgangen');
-const bibliotekRum = await place('Biblioteket', 'rum', null, 'Bogreoler');
-const reolB = await place('Bogreol B', 'reol', bibliotekRum, 'Skønlitteratur og historie');
+const place = async (navn, kode, type, overordnet, beskrivelse) =>
+  ensure('placeringer', 'navn', { navn, kode, type, overordnet, beskrivelse });
+const arkivrum = await place('Arkivrummet', 'AR', 'rum', null, 'Rummet med arkivskabene');
+const reolA = await place('Reol A', 'RA', 'reol', arkivrum, 'Ved vinduet');
+const hylde2 = await place('Reol A, hylde 2', 'H2', 'hylde', reolA, 'Anden hylde fra oven');
+const salen = await place('Udstillingsrummet', 'UR', 'rum', null, 'Museumsrummet');
+const montre1 = await place('Montre 1', 'M1', 'montre', salen, 'Ved indgangen');
+const bibliotekRum = await place('Biblioteket', 'BI', 'rum', null, 'Bogreoler');
+const reolB = await place('Bogreol B', 'RB', 'reol', bibliotekRum, 'Skønlitteratur og historie');
 
 // Genstande: min_grad 1, 5, 8
 const genstande = [

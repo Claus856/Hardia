@@ -2,6 +2,33 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [1.1.0] - 2026-10-09
+
+### Tilføjet
+- Automatisk tekstudtræk fra PDF'er på arkivmateriale (`pdftotext`) og automatiske forslag til søgeord (ord, der er sjældne i almindeligt dansk, plus egennavne; ingen AI-model) i en ny container `tekstservice`. Første udgave brugte YAKE, som gav for mange fyldord på korte tekster.
+- Felter på arkivmateriale: Søgeord, Foreslåede søgeord, Tekststatus, Tekst opdateret og Dokumenttekst (i den sammenklappede gruppe "Udtrukket tekst").
+- Flowet "Tekstudtræk: filer ændret" samt knapperne "Brug foreslåede søgeord" og "Udtræk tekst igen" på posten.
+- Servicebrugeren "Tekstservice" med statisk token (`TEKSTSERVICE_TOKEN` i `.env`) og mindst mulige rettigheder.
+- `scripts/backfill.sh`, som behandler alle eksisterende poster i arkivmateriale.
+- Bogmærkerne "Kræver OCR" og "Søgeord indeholder …" på arkivmateriale.
+- Vejledningen har afsnittet "Søgeord og tekst fra PDF'er" for Arkivar.
+
+### Ændret
+- Siden "Søg" søger også i søgeord, foreslåede søgeord og dokumenttekst.
+- `setup.sh` tilføjer manglende nøgler (`TEKSTSERVICE_TOKEN`) i en eksisterende `.env` uden at ændre resten.
+- `provision.sh` opretter også servicebruger, flows og bogmærker.
+
+### Rettet
+- `provision.sh --seed` fejlede, fordi testplaceringerne manglede koder (påkrævet siden 0.3.0).
+
+### Testet
+- På en separat testinstans: PDF med tekst (OK), scannet PDF (kræver OCR), jpg (ikke en PDF), blandet post, tilknytning via `arkivmateriale_files`, fjernelse af fil, gradstest (grad 1 finder ikke ord i en grad 5-post; grad 5 gør), servicebrugerens rettigheder, ingen løkke i flowet, backfill og backup.
+- Søgetid med 208 poster og 6 MB tekst: 0,2-0,5 sekund.
+
+### Kendt
+- Ingen OCR. Directus' eget søgefelt finder ikke ord i søgeord (kun siden "Søg" og bogmærket gør).
+- En CPU-kvote på tekstservicen låste alle containere på Chrome OS' Linux-kerne; den er fjernet og må ikke sættes igen (se README).
+
 ## [1.0.0] - 2026-10-08
 
 ### Tilføjet

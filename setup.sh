@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Opretter .env med tilfældige hemmeligheder og data-mapperne. Rører ikke en eksisterende .env,
-# medmindre du kun angiver --ip (så opdateres kun PUBLIC_URL).
+# Opretter .env med tilfældige hemmeligheder og data-mapperne. I en eksisterende .env ændres intet; der tilføjes
+# kun nøgler, som en nyere version har brug for (TEKSTSERVICE_TOKEN), og med --ip opdateres PUBLIC_URL.
 #
 #   ./setup.sh --ip 192.168.1.23            første opsætning, mobilen når serveren på denne adresse
 #   ./setup.sh --ip 192.168.1.23 --email mig@example.dk
@@ -29,12 +29,17 @@ PORT="${DIRECTUS_PORT:-8055}"
 public_url() { echo "http://${IP:-localhost}:${PORT}"; }
 
 if [ -f "$ENV_FILE" ]; then
+  if ! grep -q '^TEKSTSERVICE_TOKEN=.' "$ENV_FILE"; then
+    sed -i '/^TEKSTSERVICE_TOKEN=/d' "$ENV_FILE"
+    echo "TEKSTSERVICE_TOKEN=$(rand_alnum 48)" >> "$ENV_FILE"
+    echo "TEKSTSERVICE_TOKEN tilføjet i $ENV_FILE. Kør: ./scripts/provision.sh"
+  fi
   if [ -n "$IP" ]; then
     sed -i "s|^PUBLIC_URL=.*|PUBLIC_URL=$(public_url)|" "$ENV_FILE"
     echo "PUBLIC_URL opdateret til $(public_url). Kør: docker compose up -d"
     exit 0
   fi
-  echo "$ENV_FILE findes allerede - rører den ikke. (Brug --ip <adresse> for kun at skifte PUBLIC_URL.)"
+  echo "$ENV_FILE findes allerede - eksisterende værdier ændres ikke. (Brug --ip <adresse> for kun at skifte PUBLIC_URL.)"
   exit 0
 fi
 
@@ -57,6 +62,7 @@ PUBLIC_URL=$(public_url)
 HOST_UID=${HOST_UID_VAL}
 HOST_GID=${HOST_GID_VAL}
 TESTBRUGER_PASSWORD=$(rand_alnum 20)
+TEKSTSERVICE_TOKEN=$(rand_alnum 48)
 ENVEOF
 for v in DATA_DIR DIRECTUS_PORT COMPOSE_PROJECT_NAME; do
   [ -n "${!v:-}" ] && echo "$v=${!v}" >> "$ENV_FILE"
