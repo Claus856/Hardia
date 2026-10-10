@@ -2,6 +2,8 @@
 // Felterne på arkivmateriale kommer fra schema/snapshot.yaml; alt her ligger uden for snapshottet.
 // Idempotent: flows og rettigheder nulstilles og lægges ind igen, så filen her altid er sandheden.
 //
+// Aktivt tilvalg: tjenesten kan kun se og hente de filer, hvor "Søgbar tekst" (soegbar på koblingen) er slået til.
+//
 // Ingen løkke: tjenesten kan kun skrive dokumenttekst, foreslaaede_soegeord, tekststatus og tekst_opdateret.
 // Flowet går kun videre, når en posts filer er ændret (payload.filer eller en række i arkivmateriale_files),
 // så tjenestens egen opdatering - og knappen "Brug foreslåede søgeord" - standser ved betingelsen.
@@ -50,18 +52,19 @@ async function flow(name, data, trin) {
 
 // --- Servicebruger: mindst mulige rettigheder, ingen grad-filter (tjenesten behandler alle dokumenter) ----------
 const policy = await upsert('policies', { name: 'Tekstservice' }, {
-  icon: 'smart_toy', description: 'Læser arkivmateriale og dets filer; skriver kun de udtrukne tekstfelter', app_access: false, admin_access: false,
+  icon: 'smart_toy', description: 'Læser arkivmateriale og de filer, der er valgt til søgning; skriver kun de udtrukne tekstfelter', app_access: false, admin_access: false,
 });
 const rolle = await upsert('roles', { name: 'Tekstservice' }, { icon: 'smart_toy', description: 'Servicebruger til tekstudtræk (ikke en person)' });
 await ensureAccess(rolle.id, policy.id);
 await setPermissions(policy.id, [
   { collection: 'arkivmateriale', action: 'read', fields: ['id', 'filer', ...SKRIVER] },
   { collection: 'arkivmateriale', action: 'update', fields: SKRIVER },
-  { collection: 'arkivmateriale_files', action: 'read', fields: ['id', 'arkivmateriale_id', 'directus_files_id', 'sort'] },
-  // Kun filer, der hører til arkivmateriale - ikke genstandsfotos, omslag eller løse filer.
+  { collection: 'arkivmateriale_files', action: 'read', fields: ['id', 'arkivmateriale_id', 'directus_files_id', 'sort', 'soegbar'] },
+  // Kun filer på arkivmateriale, som arkivaren har valgt til søgning - ikke fravalgte filer, genstandsfotos,
+  // omslag eller løse filer.
   {
     collection: 'directus_files', action: 'read', fields: ['id', 'type', 'filename_download', 'filesize'],
-    permissions: { i_arkivmateriale: { arkivmateriale_id: { _nnull: true } } },
+    permissions: { i_arkivmateriale: { _and: [{ arkivmateriale_id: { _nnull: true } }, { soegbar: { _eq: true } }] } },
   },
 ]);
 await upsert('users', { first_name: 'Tekstservice' }, { last_name: '(servicebruger)', role: rolle.id, token: TOKEN, status: 'active' });
@@ -70,7 +73,7 @@ console.log('= servicebruger Tekstservice');
 // --- Flow 1: filerne på en post er ændret -> kald tekstservice (svarer straks, behandler i baggrunden) ----------
 await flow('Tekstudtræk: filer ændret', {
   icon: 'picture_as_pdf', trigger: 'event',
-  description: 'Kalder tekstservice, når filerne på en post i arkivmateriale ændres.',
+  description: 'Kalder tekstservice, når filerne på en post i arkivmateriale ændres (også når "Søgbar tekst" slås til eller fra).',
   options: { type: 'action', scope: ['items.create', 'items.update'], collections: ['arkivmateriale', 'arkivmateriale_files'] },
 }, [
   {
@@ -111,7 +114,7 @@ await flow('Brug foreslåede søgeord', {
 // --- Flow 3: knap på posten - kør tekstudtrækket igen (fx efter at en fil er slettet i filbiblioteket) ----------
 await flow('Udtræk tekst igen', {
   icon: 'refresh', trigger: 'manual',
-  description: 'Læser postens PDF\'er igen og opdaterer dokumenttekst og foreslåede søgeord.',
+  description: 'Læser de af postens PDF\'er, der er valgt til søgning, igen og opdaterer dokumenttekst og foreslåede søgeord.',
   options: KNAP,
 }, [
   { name: 'Kald tekstservice', key: 'tekstservice', type: 'request', options: { method: 'POST', url: HOOK, body: '{{$trigger.body}}' } },

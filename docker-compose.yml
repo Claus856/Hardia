@@ -82,6 +82,7 @@ services:
 
   # Tekstudtræk fra PDF'er (pdftotext) og forslag til søgeord (sjældne ord og egennavne). Kaldes af et Directus-flow, når filerne på
   # en post i arkivmateriale ændres, og skriver resultatet tilbage som servicebrugeren "Tekstservice" (se README).
+  # Læser kun de PDF'er, arkivaren har valgt til søgning (feltet "Søgbar tekst" på posten).
   tekstservice:
     build: ./tekstservice
     image: logearkiv-tekstservice

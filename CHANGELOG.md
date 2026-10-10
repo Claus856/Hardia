@@ -2,6 +2,19 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [1.2.0] - 2026-10-10
+
+### Ændret
+- Tekstudtræk er nu et aktivt tilvalg pr. PDF: arkivaren sætter hak ved filen i det nye felt "Søgbar tekst" på posten. Uden hak hentes og læses filen ikke, og der gemmes hverken tekst eller forslag til søgeord fra den. Fjernes hakket, slettes teksten igen.
+- Servicebrugeren "Tekstservice" kan kun se og hente de filer, der er valgt til søgning.
+- Ved opgradering står alle eksisterende filer som ikke valgt; `backfill.sh` fjerner den tekst, 1.1.0 udtrak automatisk (godkendte søgeord røres ikke).
+
+### Tilføjet
+- Feltet `soegbar` på `arkivmateriale_files`, udvidelsen `soegbar-tekst` og tekststatus "Ikke valgt til søgning".
+
+### Testet
+- På en separat testinstans: ny post uden valg (ingen tekst), tilvalg og fravalg af enkelte PDF'er, valg af et billede, valg via API direkte på koblingen, at tjenesten får 403 på fravalgte filer, at Medlem ikke kan ændre valget, og feltet i browseren som Arkivar og Medlem.
+
 ## [1.1.0] - 2026-10-09
 
 ### Tilføjet

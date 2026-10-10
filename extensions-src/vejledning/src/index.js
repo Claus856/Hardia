@@ -31,8 +31,8 @@ const AFSNIT = [
       'Uden søgeord vises alt i den valgte samling eller placering, så siden også kan bruges til at se, hvad der står et bestemt sted.',
       'Tryk på et resultat for at åbne posten.',
     ] },
-    'Søgningen dækker også søgeord og teksten inde i PDF-filer på arkivmateriale, når PDF\'en har et tekstlag. Du finder kun tekst i de dokumenter, din grad giver adgang til.',
-    'Søgningen dækker ikke datoer eller teksten i billeder og scannede PDF\'er uden tekstlag, og talfelter som Udgivelsesår kræver det præcise tal.',
+    'Søgningen dækker også søgeord og teksten inde i de PDF-filer på arkivmateriale, som arkivaren har valgt at gøre søgbare (og som har et tekstlag). Du finder kun tekst i de dokumenter, din grad giver adgang til.',
+    'Søgningen dækker ikke datoer eller teksten i billeder, scannede PDF\'er uden tekstlag og PDF\'er, der ikke er valgt til søgning, og talfelter som Udgivelsesår kræver det præcise tal.',
   ] },
 
   { t: 'Se poster under Indhold', b: [
@@ -87,13 +87,19 @@ const AFSNIT = [
   ] },
 
   { t: 'Søgeord og tekst fra PDF\'er', n: 1, b: [
-    'Når du lægger en PDF på en post i arkivmateriale, læses teksten automatisk ud i løbet af få sekunder. Genindlæs posten for at se resultatet.',
+    'Teksten i en PDF læses kun, hvis du vælger det for den enkelte fil. Uden dit valg bliver filen ikke læst, og der gemmes ingen tekst fra den.',
+    { trin: [
+      'Læg PDF\'en på posten under Filer/scanninger, og gem posten.',
+      'Sæt hak ved filen under Søgbar tekst lige nedenunder. Hakket gemmes med det samme, og teksten læses i løbet af få sekunder.',
+      'Genindlæs posten for at se resultatet.',
+    ] },
+    'Fjerner du hakket igen, slettes teksten fra den fil og de forslag, der byggede på den. De søgeord, du selv har godkendt, bliver stående.',
     { l: [
-      'Tekststatus viser, hvordan det gik: OK, "Ingen tekst fundet – kræver OCR" (en scanning uden tekstlag), "Ikke en PDF" (kun billeder) eller Fejl.',
+      'Tekststatus viser, hvordan det gik: OK, "Ingen tekst fundet – kræver OCR" (en scanning uden tekstlag), "Ikke valgt til søgning" (ingen af postens filer har hak), "Ikke en PDF" eller Fejl.',
       'Udtrukket tekst (nederst, foldet sammen) er den tekst, der kan søges i. Den kan ikke rettes.',
       'Foreslåede søgeord er maskinens forslag ud fra teksten. De er kun forslag.',
       'Søgeord er de godkendte søgeord. Skriv dine egne, eller tryk Brug foreslåede søgeord under Flows i sidepanelet til højre: forslagene lægges til dem, du allerede har, og du fjerner selv dem, der ikke passer.',
-      'Udtræk tekst igen (samme sted) læser postens PDF\'er på ny, fx hvis teksten ikke svarer til filerne.',
+      'Udtræk tekst igen (samme sted) læser de valgte PDF\'er på ny, fx hvis teksten ikke svarer til filerne.',
     ] },
     'Bogmærket Kræver OCR under Indhold → Arkivmateriale viser de dokumenter, der ikke kunne læses. Dem kan der kun søges i via titel, beskrivelse og søgeord.',
   ] },

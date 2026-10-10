@@ -224,7 +224,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 2
+      sort: 3
       special: null
       translations:
         - language: da-DK
@@ -310,7 +310,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 3
+      sort: 4
       special: null
       translations:
         - language: da-DK
@@ -352,7 +352,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 4
+      sort: 5
       special: null
       translations:
         - language: da-DK
@@ -394,7 +394,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 5
+      sort: 6
       special: null
       translations:
         - language: da-DK
@@ -436,7 +436,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 7
       special: null
       translations:
         - language: da-DK
@@ -484,7 +484,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 8
+      sort: 9
       special: null
       translations:
         - language: da-DK
@@ -531,7 +531,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 9
+      sort: 10
       special: null
       translations:
         - language: da-DK
@@ -574,7 +574,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 14
+      sort: 15
       special:
         - date-created
       translations:
@@ -618,7 +618,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 15
+      sort: 16
       special:
         - date-updated
       translations:
@@ -662,7 +662,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 7
+      sort: 8
       special:
         - m2o
       translations:
@@ -741,7 +741,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 11
       special:
         - cast-csv
       translations:
@@ -787,7 +787,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 11
+      sort: 12
       special:
         - cast-csv
       translations:
@@ -828,6 +828,8 @@ fields:
             value: kraever_ocr
           - text: Ikke en PDF
             value: ikke_pdf
+          - text: Ikke valgt til søgning
+            value: ikke_valgt
           - text: Fejl
             value: fejl
         showAsDot: false
@@ -835,7 +837,9 @@ fields:
       group: null
       hidden: false
       interface: select-dropdown
-      note: Resultatet af den automatiske tekstudtrækning fra postens PDF'er.
+      note: >-
+        Resultatet af tekstudtrækningen fra de PDF'er, hvor "Søgbar tekst" er
+        slået til.
       options:
         choices:
           - text: OK
@@ -844,12 +848,14 @@ fields:
             value: kraever_ocr
           - text: Ikke en PDF
             value: ikke_pdf
+          - text: Ikke valgt til søgning
+            value: ikke_valgt
           - text: Fejl
             value: fejl
       readonly: true
       required: false
       searchable: true
-      sort: 12
+      sort: 13
       special: null
       translations:
         - language: da-DK
@@ -892,7 +898,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 13
+      sort: 14
       special: null
       translations:
         - language: da-DK
@@ -936,7 +942,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 16
+      sort: 17
       special:
         - alias
         - no-data
@@ -989,6 +995,35 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: arkivmateriale
+    field: soegbar_tekst
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: soegbar_tekst
+      group: null
+      hidden: false
+      interface: soegbar-tekst
+      note: >-
+        Sæt hak ved de PDF'er, der skal kunne søges i. Uden hak læses filen
+        ikke, og der gemmes ingen tekst fra den. Hakket gemmes med det samme.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Søgbar tekst
+      validation: null
+      validation_message: null
+      width: full
   - collection: arkivmateriale_files
     field: id
     type: integer
@@ -1141,6 +1176,51 @@ fields:
       numeric_precision: 32
       numeric_scale: 0
       is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: soegbar
+    type: boolean
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: soegbar
+      group: null
+      hidden: true
+      interface: boolean
+      note: >-
+        Sat af arkivaren på posten (feltet Søgbar tekst). Kun PDF'er med true
+        læses af tekstservicen.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - cast-boolean
+      translations:
+        - language: da-DK
+          translation: Søgbar tekst
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: soegbar
+      table: arkivmateriale_files
+      data_type: boolean
+      default_value: false
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
       is_unique: false
       is_indexed: false
       is_primary_key: false

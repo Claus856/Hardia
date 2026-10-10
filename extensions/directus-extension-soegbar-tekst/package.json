@@ -1,0 +1,7 @@
+{
+  "name": "directus-extension-soegbar-tekst",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "directus:extension": { "type": "interface", "path": "index.js", "source": "index.js", "host": "^11.0.0" }
+}

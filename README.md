@@ -25,6 +25,7 @@ Status: **proof of concept** (version 1.1.0). Kører på en Chromebook (Chrome O
 | `extensions/directus-extension-nummer/` | Hook: automatiske numre, validering af placeringskoder (ren JS, ingen build) |
 | `extensions-src/placering-vaelger/`, `extensions-src/placering-ny/` | Trin-for-trin-vælger til placering og siden "Ny placering" (kildekode; bygget udgave i `extensions/`) |
 | `extensions/directus-extension-menu/` | Skjuler menupunkter pr. rolle; vælges under Indstillinger → Brugerroller → "Skjul i menuen" (ren JS, ingen build) |
+| `extensions/directus-extension-soegbar-tekst/` | Feltet "Søgbar tekst" på arkivmateriale: ét hak pr. PDF, der skal kunne søges i (ren JS, ingen build) |
 | `extensions-src/vejledning/` | Modulet "Vejledning": brugervejledning tilpasset brugerens rettigheder. Teksten står i `AFSNIT` øverst i `src/index.js` |
 | `extensions-src/soeg/` | Modulet "Søg": søgning på tværs af genstande, arkiv og bibliotek (kildekode; bygget udgave i `extensions/`) |
 | `bootstrap/` | Node-scripts, som `provision.sh` og `verify.sh` kører i en engangs-container |
@@ -40,7 +41,7 @@ Genstande og arkivmateriale kan have flere billeder/scanninger.
 | Administrator | Alt, herunder oprette brugere og sætte deres grad |
 | Arkivar | Se alt, oprette og redigere poster, uploade filer. Kan ikke slette |
 | Medlem | Kun læse poster, hvor `min_grad` ≤ medlemmets grad, og kun de filer, der hører til en synlig post |
-| Tekstservice | Servicebruger (ikke en person): læser arkivmateriale og dets filer uanset grad, skriver kun de udtrukne tekstfelter. Se [Tekstudtræk og søgeord](#tekstudtræk-og-søgeord) |
+| Tekstservice | Servicebruger (ikke en person): læser arkivmateriale og de filer, der er valgt til søgning, uanset grad, og skriver kun de udtrukne tekstfelter. Se [Tekstudtræk og søgeord](#tekstudtræk-og-søgeord) |
 
 En fil, der ikke er knyttet til nogen post, er skjult for medlemmer. Hæves en posts `min_grad`, mister
 medlemmer under graden straks adgangen til postens filer.
@@ -95,7 +96,7 @@ docker compose up -d --wait
 - Siden **Søg** i menuen søger i genstande, arkivmateriale og bibliotek på én gang. Søgningen kan afgrænses til én samling,
   til en placering (inkl. alt under den) og til ét bestemt felt. Rullelister søges på deres tekst ("tysk" finder Tyskland),
   flere ord skal alle findes, og et medlem finder kun de poster, medlemmets grad giver adgang til.
-  Søgningen dækker også søgeord og den udtrukne tekst fra PDF'er på arkivmateriale.
+  Søgningen dækker også søgeord og den udtrukne tekst fra de PDF'er på arkivmateriale, der er valgt til søgning.
 - Ved registrering af genstande, arkivmateriale og bøger vælges placeringen **trin for trin** (rum → montre → hylde).
 - Genstande og arkivmateriale får **automatisk nummer** efter placeringen: `FV-M1-H2-003` = Forværelse → Montre 1 → Hylde 2 → nr. 3.
   Løbenummeret tælles på tværs af genstande og arkivmateriale, så numrene er unikke. Nummerfeltet er skrivebeskyttet.
@@ -105,9 +106,16 @@ docker compose up -d --wait
 
 ## Tekstudtræk og søgeord
 
-Når en PDF lægges på en post i arkivmateriale, trækkes teksten ud med `pdftotext` og gemmes på posten, og
-tjenesten foreslår op til 12 søgeord ud fra teksten. Der bruges ingen OCR, ingen sprogmodel
-og ingen ekstern søgemotor: teksten ligger som felter på posten, så `min_grad`-reglen også gælder for søgning.
+Tekstudtræk er et **aktivt tilvalg pr. PDF**. Arkivaren sætter hak ved filen i feltet **Søgbar tekst** på posten; først
+da trækkes teksten ud med `pdftotext` og gemmes på posten, og tjenesten foreslår op til 12 søgeord ud fra teksten. Uden
+hak hentes og læses filen ikke, og der gemmes ingen tekst og ingen forslag fra den. Fjernes hakket, slettes teksten fra
+den fil igen. Der bruges ingen OCR, ingen sprogmodel og ingen ekstern søgemotor: teksten ligger som felter på posten, så
+`min_grad`-reglen også gælder for søgning.
+
+Valget gemmes som `soegbar` (sand/falsk, standard falsk) på koblingen `arkivmateriale_files`, altså pr. fil pr. post.
+Feltet "Søgbar tekst" på posten (udvidelsen `soegbar-tekst`) viser postens gemte PDF'er med et hak hver; hakket gemmes
+med det samme, uafhængigt af resten af formularen. Kun Arkivar og Administrator kan ændre det. Nye filer står uden hak,
+også dem fra "Tag billede".
 
 ### Felter på arkivmateriale
 
@@ -115,7 +123,8 @@ og ingen ekstern søgemotor: teksten ligger som felter på posten, så `min_grad
 |---|---|
 | `soegeord` (Søgeord) | De godkendte søgeord, som arkivaren vælger. Tjenesten skriver aldrig i feltet |
 | `foreslaaede_soegeord` (Foreslåede søgeord) | Maskinforslag. Skrivebeskyttet |
-| `tekststatus` | `ok` (OK), `kraever_ocr` (Ingen tekst fundet – kræver OCR), `ikke_pdf` (Ikke en PDF), `fejl` (Fejl). Tom = posten har ingen filer |
+| `soegbar_tekst` (Søgbar tekst) | Ikke et datafelt: viser postens PDF'er med et hak hver (gemmes som `soegbar` på `arkivmateriale_files`) |
+| `tekststatus` | `ok` (OK), `kraever_ocr` (Ingen tekst fundet – kræver OCR), `ikke_valgt` (Ikke valgt til søgning), `ikke_pdf` (Ikke en PDF), `fejl` (Fejl). Tom = posten har ingen filer |
 | `tekst_opdateret` | Hvornår tjenesten sidst ændrede felterne |
 | `dokumenttekst` | Den udtrukne tekst, med linjen `===== filnavn =====` foran hver PDF. Skrivebeskyttet, i den sammenklappede gruppe "Udtrukket tekst" nederst i formularen, og ikke en kolonne i listen som standard |
 
@@ -124,25 +133,27 @@ Feltnavnene er uden æ, ø og å, som resten af datamodellen; formularen viser d
 ### Sådan hænger det sammen
 
 1. Flowet **Tekstudtræk: filer ændret** reagerer, når en post i `arkivmateriale` oprettes eller rettes, og når der oprettes
-   eller rettes en række i `arkivmateriale_files` (det gør "Tag billede"). En betingelse lader det kun gå videre, når det
+   eller rettes en række i `arkivmateriale_files` (det gør "Tag billede" og hakket i "Søgbar tekst"). En betingelse lader det kun gå videre, når det
    er filerne, der er ændret. Så kalder det `http://tekstservice:8000/hook` med postens id.
 2. Tekstservicen svarer med det samme og lægger posten i en kø. Køen behandles én post ad gangen med lav prioritet, så
    upload fra mobilen ikke venter, og maskinen ikke belastes. Flere ændringer af samme post inden for 2 sekunder slås sammen.
-3. Tjenesten henter postens filer fra Directus, kører `pdftotext` på PDF'erne, samler teksten og gemmer den sammen med
-   søgeordsforslagene og `tekststatus`. Er resultatet uændret, skrives der ikke.
+3. Tjenesten henter de af postens PDF'er, der har `soegbar` = sand, kører `pdftotext` på dem, samler teksten og gemmer
+   den sammen med søgeordsforslagene og `tekststatus`. Er ingen fil valgt, tømmes felterne. Er resultatet uændret,
+   skrives der ikke.
 
 **Ingen løkke:** tjenestens egen opdatering udløser flowet, men standser ved betingelsen, fordi den ikke rører filerne.
 Servicebrugeren har heller ikke rettighed til andet end de fire tekstfelter.
 
-Status sættes sådan: `fejl`, hvis en PDF ikke kunne læses (for stor, beskyttet, defekt, tidsgrænse); ellers `kraever_ocr`,
-hvis mindst én PDF har under 50 tegn pr. side; ellers `ok`. Har posten kun billeder, bliver den `ikke_pdf`. Tekst fra de
-PDF'er, der kunne læses, gemmes uanset status.
+Status sættes sådan: `ikke_valgt`, hvis ingen af postens filer er valgt til søgning. Ellers ses der kun på de valgte
+filer: `fejl`, hvis en PDF ikke kunne læses (for stor, beskyttet, defekt, tidsgrænse); ellers `kraever_ocr`, hvis mindst
+én PDF har under 50 tegn pr. side; ellers `ok`. Er der kun valgt filer, som ikke er PDF'er, bliver den `ikke_pdf`. Tekst
+fra de valgte PDF'er, der kunne læses, gemmes uanset status.
 
 ### Knapper og bogmærker
 
 - **Brug foreslåede søgeord** (posten → sidepanelet → Flows): lægger forslagene til de søgeord, posten allerede har.
   Arkivaren fjerner derefter dem, der ikke passer. Intet overskrives.
-- **Udtræk tekst igen** (samme sted): kører tekstudtrækket for posten på ny.
+- **Udtræk tekst igen** (samme sted): kører tekstudtrækket for postens valgte PDF'er på ny.
 - Bogmærket **Kræver OCR** under Indhold → Arkivmateriale viser de dokumenter, der mangler et tekstlag.
 - Bogmærket **Søgeord indeholder …** er et filter på søgeord; skriv ordet i filteret.
 
@@ -157,12 +168,14 @@ læseadgang til manuelle flows.
 | Collection | Må |
 |---|---|
 | `arkivmateriale` | Læse `id`, `filer` og de fire tekstfelter. Rette `dokumenttekst`, `foreslaaede_soegeord`, `tekststatus` og `tekst_opdateret` – intet andet |
-| `arkivmateriale_files` | Læse |
-| `directus_files` | Læse `id`, `type`, `filename_download` og `filesize` for filer, der er knyttet til arkivmateriale (og hente selve filen) |
+| `arkivmateriale_files` | Læse (også `soegbar`) |
+| `directus_files` | Læse `id`, `type`, `filename_download` og `filesize` for filer, der er knyttet til arkivmateriale **og valgt til søgning** (og hente selve filen) |
 
 Der er intet grad-filter på rollen: tjenesten skal behandle alle dokumenter og ser derfor alle grader. Den kan ikke læse
 titel, beskrivelse eller grad, ikke oprette eller slette noget og ikke se genstande, bibliotek, brugere eller andre filer.
-Tokenet giver altså adgang til al tekst i arkivets PDF'er; behandl `.env` derefter. Nyt token: ret `TEKSTSERVICE_TOKEN`
+Fravalgte filer kan den hverken se eller hente (`/assets/<id>` svarer 403), så fravalget håndhæves af rettighederne
+og ikke kun af tjenestens kode. Tokenet giver altså adgang til teksten i de PDF'er, der er valgt til søgning; behandl
+`.env` derefter. Nyt token: ret `TEKSTSERVICE_TOKEN`
 i `.env`, og kør `./scripts/provision.sh` og `docker compose up -d`.
 
 Tekstservicen har ingen porte udadtil og kan kun nås fra Directus på det interne Docker-netværk.
@@ -174,7 +187,8 @@ Tekstservicen har ingen porte udadtil og kan kun nås fra Directus på det inter
 ```
 
 Kan køres igen når som helst; uændrede poster skrives ikke. Brug den efter opgradering, efter ændring af stopord eller
-grænser, og hvis filer er slettet direkte i filbiblioteket. Logen ses med `docker compose logs tekstservice`.
+grænser, og hvis filer er slettet direkte i filbiblioteket. Den læser kun de valgte PDF'er og tømmer teksten på poster,
+hvor intet er valgt. Logen ses med `docker compose logs tekstservice`.
 
 ### Grænser og indstillinger
 
@@ -223,6 +237,20 @@ Den er bygget på undertekster, så dagligdags ord vurderes rigtigt, mens fagord
   0,4-0,5 sekund på siden Søg med to ord (mod 0,02-0,04 sekund uden tekst). Tiden vokser med tekstmængden, fordi
   PostgreSQL læser al tekst igennem ved hver søgning. Bliver det for langsomt ved nogle tusinde dokumenter, er næste
   skridt et trigram-indeks (`pg_trgm`) på `dokumenttekst`. Det er ikke lavet.
+
+### Opgradering fra 1.1.0
+
+I 1.1.0 blev alle PDF'er læst automatisk. Fra 1.2.0 står alle eksisterende filer som **ikke valgt**, så `backfill.sh`
+sletter den tekst og de forslag, der allerede er udtrukket. Godkendte søgeord røres ikke. Sæt derefter hak ved de
+PDF'er, der skal kunne søges i.
+
+```bash
+./scripts/backup.sh
+docker compose up -d --build --wait
+./scripts/provision.sh     # feltet Søgbar tekst, valget på koblingen og servicebrugerens strammere rettigheder
+docker compose restart directus   # indlæser udvidelsen Søgbar tekst, den nye datamodel og Vejledning
+./scripts/backfill.sh      # fjerner tekst fra filer, der ikke er valgt
+```
 
 ### Opgradering fra 1.0.0
 
@@ -310,6 +338,8 @@ bør der sættes en omvendt proxy med TLS foran, fx Caddy. Det er ikke bygget en
 - Backups ligger lokalt, og `.env` er ikke med i dem.
 - Directus 11 er under BSL 1.1-licens; vurder selv, om logens brug er dækket.
 - Ingen OCR: scannede PDF'er uden tekstlag og billeder giver ingen søgbar tekst (`tekststatus` viser det).
+- Søgbar tekst vælges pr. fil på hver post; der er ingen "vælg alle". En ny fil kan først vælges, når posten er gemt.
+- Fjernes hakket, slettes teksten fra posten, men tidligere udgaver af teksten ligger stadig i Directus' revisionshistorik.
 - Søgeordsforslagene er statistiske: sjældne ord er ikke altid vigtige ord, og stavefejl og skævt læste ord kan komme med som "sjældne". De er forslag, ikke facit.
 - Slettes en fil direkte i filbiblioteket, eller fjernes en række direkte i `arkivmateriale_files` via API'et, opdateres postens tekst ikke automatisk. Brug "Udtræk tekst igen" eller `backfill.sh`. Fjernes filen fra posten i formularen, opdateres teksten.
 - Tekstudtrækket ændrer postens "Opdateret"-tidspunkt og giver en revision i Directus' historik.

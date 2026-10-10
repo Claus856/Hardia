@@ -1,5 +1,8 @@
 """Tekstservice til Logearkiv: trækker tekst ud af PDF'er (pdftotext) og foreslår søgeord (se soegeord.py).
 
+Kun PDF'er, hvor arkivaren har sat hak i "Søgbar tekst" på posten (soegbar på koblingen arkivmateriale_files), hentes
+og læses. Alle andre filer røres ikke, og der gemmes ingen tekst fra dem (servicebrugeren kan heller ikke hente dem).
+
 Directus kalder POST /hook fra et Flow, når filerne på en post i arkivmateriale ændres. Tjenesten svarer med det
 samme og behandler posterne én ad gangen i baggrunden, så upload fra mobilen ikke venter, og en stor PDF ikke
 låser maskinen. Den skriver kun dokumenttekst, foreslaaede_soegeord, tekststatus og tekst_opdateret - aldrig
@@ -37,10 +40,10 @@ MAX_TEGN = 1_000_000                           # loft over dokumenttekst pr. pos
 MIN_TEGN_PR_SIDE = 50                          # under dette (uden mellemrum) regnes PDF'en som scannet
 VENT_SEK = 2                                   # samler flere ændringer af samme post (fx tre billeder i træk)
 
-OK, KRAEVER_OCR, IKKE_PDF, FEJL = "ok", "kraever_ocr", "ikke_pdf", "fejl"
+OK, KRAEVER_OCR, IKKE_PDF, IKKE_VALGT, FEJL = "ok", "kraever_ocr", "ikke_pdf", "ikke_valgt", "fejl"
 
 FELTER = ",".join([
-    "id", "dokumenttekst", "foreslaaede_soegeord", "tekststatus", "filer.id", "filer.sort",
+    "id", "dokumenttekst", "foreslaaede_soegeord", "tekststatus", "filer.id", "filer.sort", "filer.soegbar",
     *(f"filer.directus_files_id.{f}" for f in ("id", "type", "filename_download", "filesize")),
 ])
 
@@ -49,7 +52,7 @@ http: httpx.AsyncClient
 koe: asyncio.Queue
 afventer: set[int] = set()
 udestaaende = 0
-taeller = {"behandlet": 0, "uaendret": 0, "ingen_filer": 0, OK: 0, KRAEVER_OCR: 0, IKKE_PDF: 0, FEJL: 0}
+taeller = {"behandlet": 0, "uaendret": 0, "ingen_filer": 0, OK: 0, KRAEVER_OCR: 0, IKKE_PDF: 0, IKKE_VALGT: 0, FEJL: 0}
 
 
 def rens(tekst: str) -> str:
@@ -99,13 +102,16 @@ async def pdf_tekst(fil: dict) -> tuple[str, int]:
 
 
 async def udtraek(post: dict) -> dict:
-    """Læser alle postens PDF'er og returnerer de felter, tjenesten ejer."""
-    koblinger = [k for k in post.get("filer") or [] if isinstance(k.get("directus_files_id"), dict)]
-    koblinger.sort(key=lambda k: (k.get("sort") is None, k.get("sort") or 0, k["id"]))
-    filer = [k["directus_files_id"] for k in koblinger]
-    if not filer:
+    """Læser de af postens PDF'er, der er valgt til søgning, og returnerer de felter, tjenesten ejer."""
+    koblinger = [k for k in post.get("filer") or [] if isinstance(k, dict)]
+    if not koblinger:
         return {"dokumenttekst": None, "foreslaaede_soegeord": None, "tekststatus": None}
-    pdfer = [f for f in filer if f.get("type") == "application/pdf"]
+    # Kun et aktivt tilvalg tæller. Uden det hentes filen ikke, og tekst fra et tidligere tilvalg fjernes.
+    valgte = [k for k in koblinger if k.get("soegbar") is True and isinstance(k.get("directus_files_id"), dict)]
+    if not valgte:
+        return {"dokumenttekst": None, "foreslaaede_soegeord": None, "tekststatus": IKKE_VALGT}
+    valgte.sort(key=lambda k: (k.get("sort") is None, k.get("sort") or 0, k["id"]))
+    pdfer = [k["directus_files_id"] for k in valgte if k["directus_files_id"].get("type") == "application/pdf"]
     if not pdfer:
         return {"dokumenttekst": None, "foreslaaede_soegeord": None, "tekststatus": IKKE_PDF}
 
