@@ -33,11 +33,12 @@ const tokens = {
 const grad = { medlem1: 1, medlem5: 5 };
 
 // ---- Facit fra admin: hvilke poster findes, hvilken grad, hvilke filer -------------------------------------------
+// Testposterne kendes på titlen (numrene tildeles automatisk efter placeringen). Andre poster i basen ignoreres.
 const posts = [];
-for (const g of await admin('GET', '/items/genstande?limit=-1&fields=id,inventarnummer,min_grad,billeder.directus_files_id&filter[inventarnummer][_starts_with]=TEST-')) {
+for (const g of await admin('GET', '/items/genstande?limit=-1&fields=id,inventarnummer,min_grad,billeder.directus_files_id&filter[titel][_starts_with]=Test-genstand')) {
   posts.push({ c: 'genstande', id: g.id, min_grad: g.min_grad, files: g.billeder.map((b) => b.directus_files_id) });
 }
-for (const a of await admin('GET', '/items/arkivmateriale?limit=-1&fields=id,min_grad,filer.directus_files_id&filter[arkivnummer][_starts_with]=TEST-')) {
+for (const a of await admin('GET', '/items/arkivmateriale?limit=-1&fields=id,min_grad,filer.directus_files_id&filter[titel][_starts_with]=Test-')) {
   posts.push({ c: 'arkivmateriale', id: a.id, min_grad: a.min_grad, files: a.filer.map((b) => b.directus_files_id) });
 }
 for (const b of await admin('GET', '/items/bibliotek?limit=-1&fields=id,min_grad,omslagsbillede&filter[titel][_starts_with]=Testbog')) {
@@ -51,14 +52,15 @@ for (const [user, g] of Object.entries(grad)) {
   for (const c of ['genstande', 'arkivmateriale', 'bibliotek']) {
     const key = { genstande: 'inventarnummer', arkivmateriale: 'arkivnummer', bibliotek: 'titel' }[c];
     const res = await http('GET', `/items/${c}?limit=-1&fields=id,min_grad`, { token: tokens[user] });
-    const sawIds = res.json.data.map((r) => r.id).sort();
+    const kendte = new Set(posts.filter((p) => p.c === c).map((p) => p.id));
+    const sawIds = res.json.data.map((r) => r.id).filter((id) => kendte.has(id)).sort();
     const expected = posts.filter((p) => p.c === c && p.min_grad <= g).map((p) => p.id).sort();
     check(`${user} (grad ${g}) ser præcis de rigtige ${c}`, JSON.stringify(sawIds) === JSON.stringify(expected), `så ${sawIds}, forventet ${expected}`);
   }
 }
 {
   const res = await http('GET', '/items/genstande?limit=-1', { token: tokens.arkivar });
-  check('arkivar ser alle genstande (også grad 8)', res.json.data.filter((r) => r.inventarnummer?.startsWith('TEST-')).length === 3);
+  check('arkivar ser alle genstande (også grad 8)', res.json.data.filter((r) => r.titel?.startsWith('Test-genstand')).length === 3);
 }
 // Direkte adgang til en enkelt post med for høj grad
 {
@@ -95,7 +97,8 @@ check(`alle ${fileChecks} kombinationer af fil x bruger giver rigtigt svar (/ass
   const expect = (g) => posts.filter((p) => p.min_grad <= g).flatMap((p) => p.files).sort();
   for (const [user, g] of Object.entries(grad)) {
     const res = await http('GET', '/files?limit=-1&fields=id', { token: tokens[user] });
-    const got = res.json.data.map((f) => f.id).sort();
+    const testfiler = new Set(posts.flatMap((p) => p.files)); // andre posters filer ignoreres
+    const got = res.json.data.map((f) => f.id).filter((id) => testfiler.has(id)).sort();
     check(`${user} ser kun egne tilladte filer i fil-biblioteket (${expect(g).length} stk.)`,
       JSON.stringify(got) === JSON.stringify(expect(g)), `fik ${got.length}, forventet ${expect(g).length}`);
   }

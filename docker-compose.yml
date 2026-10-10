@@ -82,7 +82,7 @@ services:
 
   # Tekstudtræk fra PDF'er (pdftotext) og forslag til søgeord (sjældne ord og egennavne). Kaldes af et Directus-flow, når filerne på
   # en post i arkivmateriale ændres, og skriver resultatet tilbage som servicebrugeren "Tekstservice" (se README).
-  # Læser kun de PDF'er, arkivaren har valgt til søgning (feltet "Søgbar tekst" på posten).
+  # Læser kun de filer, arkivaren har valgt til søgning (feltet "Søgbar tekst" på posten); scanninger og billeder OCR'es.
   tekstservice:
     build: ./tekstservice
     image: logearkiv-tekstservice
@@ -93,10 +93,17 @@ services:
       TEKST_MAX_FIL_MB: ${TEKST_MAX_FIL_MB:-50}
       TEKST_MAX_SIDER: ${TEKST_MAX_SIDER:-300}
       TEKST_TIMEOUT_SEK: ${TEKST_TIMEOUT_SEK:-120}
+      # OCR (tesseract/ocrmypdf): kan slås helt fra på en svag maskine; grænserne gælder pr. PDF og pr. side.
+      OCR_SLAAET_TIL: ${OCR_SLAAET_TIL:-true}
+      OCR_MAX_SIDER: ${OCR_MAX_SIDER:-50}
+      OCR_TIMEOUT_SEK: ${OCR_TIMEOUT_SEK:-120}
+      OCR_MAX_MEGAPIXEL: ${OCR_MAX_MEGAPIXEL:-20}
     # Hukommelsesloft, så en stor PDF ikke tager hele maskinen. Behandlingen kører én post ad gangen med lav
-    # prioritet (nice), så den bruger højst én kerne. Sæt IKKE "cpus:"/CPU-kvote her: på Chrome OS' Linux-kerne
-    # (6.6) gav den et RCU-stall, der låste alle containere, til kvoten blev fjernet.
-    mem_limit: 512m
+    # prioritet (nice) og én kerne (ocrmypdf --jobs 1, OMP_THREAD_LIMIT=1). Sæt IKKE "cpus:"/CPU-kvote her: på
+    # Chrome OS' Linux-kerne (6.6) gav den et RCU-stall, der låste alle containere, til kvoten blev fjernet.
+    # 768m: målt op til ca. 400 MB under OCR af 300 dpi-scanninger og 12 MP-fotos; OCR_MAX_MEGAPIXEL holder større
+    # filer ude (en farvescanning i 600 dpi brugte ca. 600 MB, et 48 MP-foto ca. 490 MB).
+    mem_limit: 768m
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/sundhed', timeout=3)"]
       interval: 10s

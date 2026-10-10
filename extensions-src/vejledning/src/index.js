@@ -31,8 +31,9 @@ const AFSNIT = [
       'Uden søgeord vises alt i den valgte samling eller placering, så siden også kan bruges til at se, hvad der står et bestemt sted.',
       'Tryk på et resultat for at åbne posten.',
     ] },
-    'Søgningen dækker også søgeord og teksten inde i de PDF-filer på arkivmateriale, som arkivaren har valgt at gøre søgbare (og som har et tekstlag). Du finder kun tekst i de dokumenter, din grad giver adgang til.',
-    'Søgningen dækker ikke datoer eller teksten i billeder, scannede PDF\'er uden tekstlag og PDF\'er, der ikke er valgt til søgning, og talfelter som Udgivelsesår kræver det præcise tal.',
+    'Søgningen dækker også søgeord og teksten inde i de filer på arkivmateriale, som arkivaren har valgt at gøre søgbare. Det gælder også scannede PDF\'er og fotograferede sider, når de er maskinlæst (OCR). Du finder kun tekst i de dokumenter, din grad giver adgang til.',
+    'Maskinlæst tekst kan indeholde fejl, så prøv et andet ord fra dokumentet, hvis du ikke finder det, du leder efter. Håndskrift kan ikke læses.',
+    'Søgningen dækker ikke datoer eller teksten i filer, der ikke er valgt til søgning, og talfelter som Udgivelsesår kræver det præcise tal.',
   ] },
 
   { t: 'Se poster under Indhold', b: [
@@ -87,21 +88,28 @@ const AFSNIT = [
   ] },
 
   { t: 'Søgeord og tekst fra PDF\'er', n: 1, b: [
-    'Teksten i en PDF læses kun, hvis du vælger det for den enkelte fil. Uden dit valg bliver filen ikke læst, og der gemmes ingen tekst fra den.',
+    'Teksten i en fil læses kun, hvis du vælger det for den enkelte fil. Uden dit valg bliver filen ikke læst, og der gemmes ingen tekst fra den.',
     { trin: [
-      'Læg PDF\'en på posten under Filer/scanninger, og gem posten.',
-      'Sæt hak ved filen under Søgbar tekst lige nedenunder. Hakket gemmes med det samme, og teksten læses i løbet af få sekunder.',
-      'Genindlæs posten for at se resultatet.',
+      'Læg PDF\'en eller billederne på posten under Filer/scanninger (eller med Tag billede), og gem posten.',
+      'Sæt hak ved filerne under Søgbar tekst lige nedenunder, eller tryk Sæt hak ved alle. Hakket gemmes med det samme.',
+      'Genindlæs posten for at se resultatet. En PDF med tekst tager få sekunder; scanninger og billeder maskinlæses (OCR) og tager 5-10 sekunder pr. side.',
     ] },
     'Fjerner du hakket igen, slettes teksten fra den fil og de forslag, der byggede på den. De søgeord, du selv har godkendt, bliver stående.',
     { l: [
-      'Tekststatus viser, hvordan det gik: OK, "Ingen tekst fundet – kræver OCR" (en scanning uden tekstlag), "Ikke valgt til søgning" (ingen af postens filer har hak), "Ikke en PDF" eller Fejl.',
+      'En PDF, der allerede har tekst (fx fra telefonens dokumentscanner), læses direkte.',
+      'En scannet PDF uden tekst maskinlæses, og der lægges en søgbar kopi på posten med navnet "… (søgbar).pdf". Originalen bliver liggende.',
+      'Billeder maskinlæses hver for sig, så posten kan findes ved søgning. Der laves ikke automatisk en PDF af dem.',
+      'Saml billeder til søgbar PDF (under Flows i sidepanelet til højre) samler de billeder, der har hak, til én PDF med tekst, i samme rækkefølge som under Filer/scanninger. Billederne bevares. Trykker du igen efter at have ændret billederne, opdateres den samme PDF.',
+    ] },
+    'Maskinlæst tekst kan indeholde fejl, især ved skæve eller uskarpe fotos, gammel skrift og dårligt lys. Håndskrift kan ikke læses. Skriv selv de vigtigste ord i Søgeord, hvis teksten er dårlig.',
+    { l: [
+      'Tekststatus viser, hvordan det gik: OK (teksten stod i PDF\'en), "OK – tekst fra OCR" (maskinlæst, kan indeholde fejl), "Ingen tekst fundet – kræver OCR" (maskinen fandt ingen brugbar tekst, fx håndskrift), "Ikke valgt til søgning" (ingen af postens filer har hak), "Filtypen kan ikke læses" eller Fejl (fx en fil, der er for stor).',
       'Udtrukket tekst (nederst, foldet sammen) er den tekst, der kan søges i. Den kan ikke rettes.',
       'Foreslåede søgeord er maskinens forslag ud fra teksten. De er kun forslag.',
       'Søgeord er de godkendte søgeord. Skriv dine egne, eller tryk Brug foreslåede søgeord under Flows i sidepanelet til højre: forslagene lægges til dem, du allerede har, og du fjerner selv dem, der ikke passer.',
-      'Udtræk tekst igen (samme sted) læser de valgte PDF\'er på ny, fx hvis teksten ikke svarer til filerne.',
+      'Udtræk tekst igen (samme sted) læser de valgte filer på ny, fx hvis teksten ikke svarer til filerne. Filer, der allerede er maskinlæst, læses ikke en gang til.',
     ] },
-    'Bogmærket Kræver OCR under Indhold → Arkivmateriale viser de dokumenter, der ikke kunne læses. Dem kan der kun søges i via titel, beskrivelse og søgeord.',
+    'Bogmærkerne under Indhold → Arkivmateriale: Kræver OCR viser de dokumenter, maskinen ikke kunne læse (dem kan der kun søges i via titel, beskrivelse og søgeord), og Tekst fra OCR viser dem, hvor teksten er maskinlæst.',
   ] },
 
   { t: 'Tag billede', n: 1, b: [
@@ -113,6 +121,8 @@ const AFSNIT = [
       'Tryk Tag billede. Kameraet åbner; tag billedet og godkend det.',
       'Billedet overføres og knyttes til posten. Gentag for flere billeder.',
     ] },
+    'Dokumenter: fotografér siderne én ad gangen, lige på og i godt lys, så hele siden er med og teksten er skarp. Åbn derefter posten, sæt hak ved billederne under Søgbar tekst, og tryk Saml billeder til søgbar PDF, hvis siderne skal samles til ét dokument.',
+    'Tip: til dokumenter på flere sider er telefonens indbyggede dokumentscanner ofte bedre (Noter eller Filer på iPhone, Google Drev på Android). Den retter siderne op og giver én PDF, som du lægger på posten og sætter hak ved.',
     'Du kan også lægge billeder på fra computeren: åbn posten under Indhold og brug feltet Billeder.',
   ] },
 

@@ -824,9 +824,11 @@ fields:
         choices:
           - text: OK
             value: ok
+          - text: OK – tekst fra OCR
+            value: ocr
           - text: Ingen tekst fundet – kræver OCR
             value: kraever_ocr
-          - text: Ikke en PDF
+          - text: Filtypen kan ikke læses
             value: ikke_pdf
           - text: Ikke valgt til søgning
             value: ikke_valgt
@@ -838,15 +840,17 @@ fields:
       hidden: false
       interface: select-dropdown
       note: >-
-        Resultatet af tekstudtrækningen fra de PDF'er, hvor "Søgbar tekst" er
-        slået til.
+        Resultatet af tekstudtrækningen fra de filer, hvor "Søgbar tekst" er
+        slået til. Tekst fra OCR er maskinlæst og kan indeholde fejl.
       options:
         choices:
           - text: OK
             value: ok
+          - text: OK – tekst fra OCR
+            value: ocr
           - text: Ingen tekst fundet – kræver OCR
             value: kraever_ocr
-          - text: Ikke en PDF
+          - text: Filtypen kan ikke læses
             value: ikke_pdf
           - text: Ikke valgt til søgning
             value: ikke_valgt
@@ -954,6 +958,36 @@ fields:
       validation_message: null
       width: full
   - collection: arkivmateriale
+    field: soegbar_tekst
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: soegbar_tekst
+      group: null
+      hidden: false
+      interface: soegbar-tekst
+      note: >-
+        Sæt hak ved de PDF'er og billeder, der skal kunne søges i. Scanninger og
+        billeder læses med OCR. Uden hak læses filen ikke, og der gemmes ingen
+        tekst fra den. Hakket gemmes med det samme.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Søgbar tekst
+      validation: null
+      validation_message: null
+      width: full
+  - collection: arkivmateriale
     field: dokumenttekst
     type: text
     meta:
@@ -995,35 +1029,6 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: arkivmateriale
-    field: soegbar_tekst
-    type: alias
-    meta:
-      collection: arkivmateriale
-      conditions: null
-      display: null
-      display_options: null
-      field: soegbar_tekst
-      group: null
-      hidden: false
-      interface: soegbar-tekst
-      note: >-
-        Sæt hak ved de PDF'er, der skal kunne søges i. Uden hak læses filen
-        ikke, og der gemmes ingen tekst fra den. Hakket gemmes med det samme.
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: 2
-      special:
-        - alias
-        - no-data
-      translations:
-        - language: da-DK
-          translation: Søgbar tekst
-      validation: null
-      validation_message: null
-      width: full
   - collection: arkivmateriale_files
     field: id
     type: integer
@@ -1197,7 +1202,7 @@ fields:
       hidden: true
       interface: boolean
       note: >-
-        Sat af arkivaren på posten (feltet Søgbar tekst). Kun PDF'er med true
+        Sat af arkivaren på posten (feltet Søgbar tekst). Kun filer med true
         læses af tekstservicen.
       options: null
       readonly: false
@@ -1221,6 +1226,171 @@ fields:
       numeric_precision: null
       numeric_scale: null
       is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: ocr_type
+    type: string
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: ocr_type
+      group: null
+      hidden: true
+      interface: input
+      note: >-
+        Sat af tekstservicen på dens egne søgbare PDF'er: scanning (kopi af én
+        scannet PDF) eller samlet (postens billeder samlet).
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ocr_type
+      table: arkivmateriale_files
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: ocr_kilder
+    type: json
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: ocr_kilder
+      group: null
+      hidden: true
+      interface: input-code
+      note: Id på de filer, tekstservicens søgbare PDF er lavet af.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 7
+      special:
+        - cast-json
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ocr_kilder
+      table: arkivmateriale_files
+      data_type: json
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: ocr_tekst
+    type: text
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: ocr_tekst
+      group: null
+      hidden: true
+      interface: input-multiline
+      note: >-
+        OCR-tekst fra et billede, gemt så billedet kun OCR'es én gang. Tom tekst
+        = OCR fandt intet.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ocr_tekst
+      table: arkivmateriale_files
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale_files
+    field: ocr_version
+    type: string
+    meta:
+      collection: arkivmateriale_files
+      conditions: null
+      display: null
+      display_options: null
+      field: ocr_version
+      group: null
+      hidden: true
+      interface: input
+      note: Filens aftryk (størrelse og ændringstid), da OCR sidst blev kørt.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 9
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ocr_version
+      table: arkivmateriale_files
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
       is_unique: false
       is_indexed: false
       is_primary_key: false

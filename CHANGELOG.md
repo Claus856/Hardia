@@ -2,6 +2,38 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [1.3.0] - 2026-10-10
+
+### Tilføjet
+- OCR i tekstservicen (`ocrmypdf`, `tesseract` med dansk og engelsk, `img2pdf`), lokalt og kun for filer med hak i "Søgbar tekst".
+- Scannede PDF'er får en søgbar kopi, `<originalnavn> (søgbar).pdf`, som lægges på posten i mappen "OCR"; originalen bevares.
+- Billeder (også heic) OCR'es hver for sig, så posten bliver søgbar. Mobilfotos vendes efter EXIF, skaleres ned og rettes op først.
+- Knappen "Saml billeder til søgbar PDF" på arkivmateriale: de valgte billeder samles i filrækkefølgen til én PDF med tekstlag. Et nyt tryk udskifter indholdet af samme fil.
+- Tekststatus "OK – tekst fra OCR" (`ocr`) og bogmærket "Tekst fra OCR".
+- Felterne `ocr_type`, `ocr_kilder`, `ocr_tekst` og `ocr_version` på `arkivmateriale_files`.
+- Indstillingerne `OCR_SLAAET_TIL`, `OCR_MAX_SIDER`, `OCR_TIMEOUT_SEK` (pr. side) og `OCR_MAX_MEGAPIXEL`.
+- Feltet "Søgbar tekst" viser også billeder og har knappen "Sæt hak ved alle".
+
+### Ændret
+- "Kræver OCR" bruges nu kun, når OCR er slået fra, eller når OCR ikke fandt brugbar tekst (fx håndskrift). "Ikke en PDF" hedder "Filtypen kan ikke læses".
+- Servicebrugeren må lægge filer op, rette sine egne filer, oprette koblinger til sine egne søgbare PDF'er og rette OCR-felterne på koblinger. Stadig ingen delete og ingen adgang til genstande, bibliotek eller brugere.
+- Flowet "Tekstudtræk: filer ændret" går ikke videre for ændringer, tjenesten selv har lavet.
+- Tekstservicens hukommelsesloft er hævet fra 512 MB til 768 MB, og imaget er vokset fra 271 MB til ca. 690 MB.
+- Vejledningen: "Søg i arkivet", "Søgeord og tekst fra PDF'er" og "Tag billede" beskriver OCR, knappen og telefonens dokumentscanner.
+
+### Rettet
+- `verify.sh` fejlede på en frisk installation og når basen indeholdt andet end testdata: testposterne kendes nu på titlen (numrene tildeles automatisk), og andre posters filer ignoreres. Alle 41 tjek består.
+
+### Testet
+- På en separat testinstans: scannet PDF på 3 sider (status `ocr`, søgbar kopi på posten, original bevaret, søgning på ord med æ, ø og å), tre skæve mobilfotos og et foto på højkant med EXIF-rotation, samleknappen (rigtig rækkefølge, ingen dublet ved nyt tryk), PDF med tekstlag (uændret, ingen OCR), blandet post, "håndskrift" (`kraever_ocr`), fravalg og nyt tilvalg (kopien genbruges), "Udtræk tekst igen" og backfill (ingen nye filer, "uændret"), udskiftning af den samlede PDF i samme fil, HEIC, gradstest (grad 1 finder ikke teksten og får 403 på den nye PDF; grad 5 kan begge dele), `OCR_SLAAET_TIL=false`, for store filer (`fejl`), at tjenesten ikke kan slette eller ændre et hak, og at dens egne ændringer ikke giver en løkke (tjenestens log og aktivitetsloggen).
+- Målt: ca. 8,5 sekunder pr. scannet side og 4,5 sekunder pr. mobilfoto; Directus svarede lige så hurtigt under OCR som uden.
+
+### Kendt
+- Håndskrift og gotisk skrift læses ikke. En frakturmodel er undersøgt, men ikke installeret (se README).
+- Billeder og scannede sider over 20 megapixel OCR'es ikke på Chromebooken.
+- Genstarter tekstservicen midt i en OCR, skal posten sættes i gang igen med "Udtræk tekst igen".
+- Ikke afprøvet på en rigtig telefon.
+
 ## [1.2.0] - 2026-10-10
 
 ### Ændret
