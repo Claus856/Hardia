@@ -169,13 +169,11 @@ if (arkivar) {
   console.log('! rollen Arkivar findes ikke endnu - kør configure.mjs først');
 }
 // --- Bogmærker under Indhold -> Arkivmateriale (fælles for alle; indholdet følger stadig brugerens grad) --------
-// Directus' eget søgefelt finder ord i dokumenttekst, men ikke i tag-felter som søgeord. Bogmærket "Søgeord
-// indeholder …" er et filter på søgeord, hvor brugeren selv skriver ordet. (Siden "Søg" dækker begge felter.)
+// Directus' eget søgefelt finder ord i dokumenttekst, men ikke i tag-felter som søgeord; det gør siden "Søg".
 const KOLONNER = ['arkivnummer', 'titel', 'dokumenttype', 'dato', 'tekststatus', 'soegeord'];
 const BOGMAERKER = [
   ['Kræver OCR', 'document_scanner', { _and: [{ tekststatus: { _eq: 'kraever_ocr' } }] }],
   ['Tekst fra OCR', 'spellcheck', { _and: [{ tekststatus: { _eq: 'ocr' } }] }],
-  ['Søgeord indeholder …', 'sell', { _and: [{ soegeord: { _icontains: '' } }] }],
 ];
 for (const [bookmark, icon, filter] of BOGMAERKER) {
   const data = { icon, layout: 'tabular', filter, layout_query: { tabular: { fields: KOLONNER, sort: ['arkivnummer'] } } };

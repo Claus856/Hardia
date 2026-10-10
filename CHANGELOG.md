@@ -21,6 +21,9 @@ Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og ve
 - Tekstservicens hukommelsesloft er hævet fra 512 MB til 768 MB, og imaget er vokset fra 271 MB til ca. 690 MB.
 - Vejledningen: "Søg i arkivet", "Søgeord og tekst fra PDF'er" og "Tag billede" beskriver OCR, knappen og telefonens dokumentscanner.
 
+### Fjernet
+- Bogmærket "Søgeord indeholder …" på arkivmateriale: det havde et tomt filter og meldte fejl, når det blev åbnet. Siden Søg dækker søgning i søgeord.
+
 ### Rettet
 - `verify.sh` fejlede på en frisk installation og når basen indeholdt andet end testdata: testposterne kendes nu på titlen (numrene tildeles automatisk), og andre posters filer ignoreres. Alle 41 tjek består.
 

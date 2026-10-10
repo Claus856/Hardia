@@ -173,7 +173,6 @@ den har under 50 tegn pr. side.
 - **Saml billeder til søgbar PDF** (samme sted): samler postens valgte billeder til én PDF med tekstlag (se [OCR](#ocr)).
 - Bogmærket **Kræver OCR** under Indhold → Arkivmateriale viser de dokumenter, OCR ikke kunne læse (eller som venter,
   fordi OCR er slået fra). Bogmærket **Tekst fra OCR** viser dem, hvor teksten er maskinlæst og kan indeholde fejl.
-- Bogmærket **Søgeord indeholder …** er et filter på søgeord; skriv ordet i filteret.
 
 Knapperne ses af Administrator og Arkivar. Arkivar får dem via den ekstra policy "Arkivar: flow-knapper", som kun giver
 læseadgang til manuelle flows.
@@ -315,7 +314,7 @@ afprøvet; gammel retskrivning med latinske bogstaver (før 1948) læses af den 
 
 - Siden **Søg** søger i dokumenttekst, søgeord og foreslåede søgeord sammen med de øvrige felter.
 - Directus' eget søgefelt over listen finder ord i dokumenttekst, men **ikke** i søgeord: tag-felter indgår ikke i
-  Directus' fritekstsøgning. Brug siden Søg eller bogmærket "Søgeord indeholder …".
+  Directus' fritekstsøgning. Brug siden Søg (vælg evt. "Søgeord" under "Søg i").
 - Målt med 208 poster og 6 MB udtrukket tekst på Chromebooken: ca. 0,2-0,3 sekund pr. søgning i Directus' søgefelt og
   0,4-0,5 sekund på siden Søg med to ord (mod 0,02-0,04 sekund uden tekst). Tiden vokser med tekstmængden, fordi
   PostgreSQL læser al tekst igennem ved hver søgning. Bliver det for langsomt ved nogle tusinde dokumenter, er næste
