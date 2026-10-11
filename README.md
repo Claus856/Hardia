@@ -5,7 +5,7 @@ tekstservice, der trækker tekst ud af PDF'er, maskinlæser scanninger og fotos 
 Registrering af genstande, arkivmateriale og bibliotek med billeder/scanninger, hvor hver post har en
 mindste-grad (`min_grad`), og et medlem kun ser de poster og filer, som medlemmets egen grad giver adgang til.
 
-Status: **proof of concept** (version 1.4.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
+Status: **proof of concept** (version 1.5.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
 
 ## Indhold
 
@@ -20,6 +20,9 @@ Status: **proof of concept** (version 1.4.0). Kører på en Chromebook (Chrome O
 | `scripts/snapshot.sh` | Eksporterer datamodellen til `schema/snapshot.yaml` |
 | `scripts/backfill.sh` | Kører tekstudtræk og søgeordsforslag for alle eksisterende poster i arkivmateriale |
 | `tekstservice/` | Tekstservicen (Python, FastAPI, pdftotext, ocrmypdf/tesseract). OCR ligger i `ocr.py`. Søgeordsforslagene laves i `soegeord.py` ud fra `ordfrekvens_da.txt` og `stopord_da.txt` |
+| `extensions/directus-extension-oversigt/` | Modulet "Oversigtsbilleder": foto af en placering med prikker på genstandene (ren JS, ingen build) |
+| `extensions/directus-extension-oversigt-regler/` | Hook: regler for markeringer, "skal placeres igen" ved nyt billede og "flyttet", når en markeret post flyttes (ren JS, ingen build) |
+| `extensions/directus-extension-oversigt-link/` | Feltet "Oversigtsbilleder" på genstande og arkivmateriale med linket "Vis på oversigtsbillede" (ren JS, ingen build) |
 | `bootstrap/udlaan.mjs` | Flowet "Ryd udlån ved retur" og bogmærket "Udlånt" for Arkivar og Administrator |
 | `extensions/directus-extension-udlaan-koe/` | Feltet "Kø" på genstande, arkivmateriale og bøger: stil dig i kø, og se hvor mange der står der (ren JS, ingen build) |
 | `bootstrap/tekst.mjs` | Servicebrugeren "Tekstservice", de fire flows, mappen "OCR", flow-knapperne for Arkivar og bogmærkerne |
@@ -35,14 +38,15 @@ Status: **proof of concept** (version 1.4.0). Kører på en Chromebook (Chrome O
 
 ## Datamodel og roller
 
-Collections: `genstande`, `arkivmateriale`, `bibliotek` og `placeringer` (hierarkisk: rum → reol → hylde).
+Collections: `genstande`, `arkivmateriale`, `bibliotek` og `placeringer` (hierarkisk: rum → reol → hylde), samt
+`oversigtsbilleder` og `markeringer` (se [Oversigtsbilleder](#oversigtsbilleder)) og `reservationer` (køen).
 Genstande og arkivmateriale kan have flere billeder/scanninger.
 
 | Rolle | Må |
 |---|---|
 | Administrator | Alt, herunder oprette brugere og sætte deres grad |
-| Arkivar | Se alt, oprette og redigere poster, uploade filer. Kan ikke slette poster. Ser lånerens navn og hvem der står i kø, og kan fjerne en plads i køen |
-| Medlem | Kun læse poster, hvor `min_grad` ≤ medlemmets grad, og kun de filer, der hører til en synlig post. Kan stille sig i kø til en post og se antallet i køen, men ikke lånerens navn eller hvem der står i køen |
+| Arkivar | Se alt, oprette og redigere poster, oversigtsbilleder og markeringer, uploade filer. Kan ikke slette poster eller oversigtsbilleder, men kan fjerne en markering. Ser lånerens navn og hvem der står i kø, og kan fjerne en plads i køen |
+| Medlem | Kun læse poster, hvor `min_grad` ≤ medlemmets grad, og kun de filer, der hører til en synlig post. Ser oversigtsbilleder efter billedets egen grad og kun prikker for poster, medlemmet selv må se. Kan stille sig i kø til en post og se antallet i køen, men ikke lånerens navn eller hvem der står i køen |
 | Tekstservice | Servicebruger (ikke en person): læser arkivmateriale og de filer, der er valgt til søgning, uanset grad, skriver kun de udtrukne tekstfelter og lægger søgbare PDF'er (OCR) på posten. Se [Tekstudtræk og søgeord](#tekstudtræk-og-søgeord) |
 
 En fil, der ikke er knyttet til nogen post, er skjult for medlemmer. Hæves en posts `min_grad`, mister
@@ -106,6 +110,66 @@ docker compose up -d --wait
 - **Flyttes** en post, eller ændres kode/overordnet på en placering, **regnes numrene nedenunder om**. Det gamle nummer er derefter ugyldigt,
   så nye labels skal skrives ved flytning. Alle koder på stien skal være udfyldt, ellers afvises posten.
 - Poster med eksplicit nummer og uden placering (testdata, import) lades urørte. `POST /nummer/omnummerer` (kun admin) regner alle poster om.
+
+## Oversigtsbilleder
+
+Et oversigtsbillede er et foto af en placering (montre, rum, væg, skab …), hvor de registrerede genstande og dokumenter
+er markeret med prikker. Modulet **Oversigtsbilleder** i menuen viser dem; arkivar og administrator laver dem samme sted.
+
+### Datamodel
+
+| Collection | Felter |
+|---|---|
+| `oversigtsbilleder` | `placering` (påkrævet, alle typer, flere billeder pr. placering), `billede` (fil, påkrævet), `titel` (valgfri), `min_grad` (1-10), `billede_skiftet` (skjult, sættes når filen udskiftes), `noter`. Visningsnavn: placeringens sti + titel |
+| `markeringer` | `oversigtsbillede` (slettes med billedet), `genstand` **eller** `arkivmateriale` (præcis én), `x` og `y` (0-100, procent af billedets bredde og højde), `status`: `placeret`, `skal_placeres` (skal placeres igen) eller `flyttet` |
+
+Omvendte felter: `oversigtsbilleder` på placeringer, `markeringer` på oversigtsbilleder, `paa_oversigtsbilleder` på
+genstande og arkivmateriale (viser linket "Vis på oversigtsbillede") og det skjulte `i_oversigtsbilleder` på `directus_files`.
+
+### Rettigheder og grad
+
+- Et oversigtsbillede har **sin egen grad**: hvem må se rummet eller montren. Et medlem ser billedet, når `min_grad` ≤ medlemmets grad.
+- En markering ses kun af et medlem, når billedet er synligt, markeringen har status `placeret`, **og** den markerede
+  post selv er synlig efter sin egen `min_grad`. Ellers kommer rækken slet ikke med i svaret fra API'et, så hverken
+  prik, titel, nummer eller id røbes. Genstanden kan stadig ses på selve fotoet; vælg billedets grad efter det.
+- **Fil-beskyttelsen** er udvidet med aliasset `i_oversigtsbilleder`: billedfilen følger oversigtsbilledets grad på
+  samme måde som filer følger deres post. Bruges en fil både på en post og på et oversigtsbillede, er den synlig, når blot én af dem er.
+- Arkivar kan oprette og rette oversigtsbilleder og markeringer og fjerne en markering (kun prikken). Kun Administrator kan slette et oversigtsbillede.
+- Tekstservicen har ingen adgang til de to collections.
+
+### Regler (udvidelsen `oversigt-regler`)
+
+- En markering peger på præcis én post, `x` og `y` ligger mellem 0 og 100, og en post har højst én markering pr. billede.
+- **Nyt billede:** udskiftes filen på et oversigtsbillede, får alle dets markeringer status `skal_placeres`. De beholder
+  deres position, vises gule for arkivaren og er skjult for medlemmer, til de er trukket på plads eller bekræftet.
+- **Flyttet:** flyttes en markeret post fra en placering i billedets undertræ til en uden for det, får markeringen status
+  `flyttet` (rød for arkivaren, skjult for medlemmer). Flyttes posten ind igen, bliver den `placeret`. Reglen ser kun på
+  flytninger fra inden for til uden for, så en post, der med vilje er markeret uden for undertræet (et maleri, der hænger
+  i rummet, men er registreret et andet sted), ikke bliver `flyttet`. Intet slettes automatisk.
+
+### Modulet
+
+- **Visning (alle):** vælg placering trin for trin; placeringer med oversigtsbilleder i eller under sig er fremhævet med
+  antallet. Billedet vises i presetet `visning` (1600 px) med nummererede prikker. Zoom med to fingre, musehjul eller
+  knapperne; prikkerne følger med og beholder størrelsen. Tryk på en prik giver et kort med thumbnail, nummer, titel,
+  status, uddrag af beskrivelsen og "Åbn post". Listen under billedet viser de samme markeringer hylde for hylde.
+- **Nyt oversigtsbillede (arkivar):** fra placeringen i modulet eller genvejen i Tag billede. Kamera, fil fra enheden
+  eller et billede, der allerede ligger på en genstand under placeringen. `min_grad` foreslås som den højeste grad blandt
+  genstande og arkivmateriale i hele undertræet.
+- **Markér:** tryk "Redigér markeringer" og derefter på billedet. Vælgeren viser undertræets placeringer med deres poster,
+  har søgning i hele arkivet (poster uden for undertræet får en advarsel) og "Vis kun umarkerede". En allerede markeret
+  post flyttes hertil i stedet for at få to prikker. Prikker flyttes ved at trække dem. En tæller viser, hvor mange af
+  undertræets poster der er markeret.
+- Adressen `/admin/oversigt/<id>?prik=<markering>` åbner billedet med prikken fremhævet; det er den, "Vis på oversigtsbillede" bruger.
+- Modulet slås til af `provision.sh` og kan skjules pr. rolle under Indstillinger → Brugerroller → "Skjul i menuen".
+
+### Opgradering fra 1.4.0
+
+```bash
+./scripts/backup.sh
+./scripts/provision.sh            # oversigtsbilleder, markeringer, rettigheder, fil-beskyttelsen og menupunktet
+docker compose restart directus   # indlæser den nye datamodel, modulet, reglerne og Vejledning
+```
 
 ## Udlån og kø
 
@@ -415,6 +479,13 @@ Mobilen skal være på samme Wi-Fi som Chromebooken.
 - [ ] Tag et foto og gem; billedet vises i listen som thumbnail og i posten i fuld visning
 - [ ] Et foto taget på højkant vises på højkant
 - [ ] Hæv postens `min_grad`, og bekræft som `medlem1`, at billedet er væk
+- [ ] Oversigtsbilleder som arkivar: gå til en montre, tryk "Nyt oversigtsbillede" og "Tag billedet" – kameraet åbner direkte, og billedet står rigtigt (ikke på siden)
+- [ ] Tryk på en genstand på billedet, vælg den i listen, og se at prikken sidder, hvor du trykkede
+- [ ] Træk en prik med fingeren; siden må ikke rulle imens, og prikken bliver, hvor du slipper
+- [ ] Tryk "Færdig", og knib med to fingre: billedet zoomer, prikkerne følger med og beholder størrelsen, og hele siden zoomer ikke med
+- [ ] Træk med én finger på det zoomede billede (flytter udsnittet), og rul siden med én finger på billedet, når det ikke er zoomet
+- [ ] Tryk på en prik: kortet vises under billedet, kan læses uden vandret rul, og "Åbn post" virker
+- [ ] Login som medlem: prikker for genstande over medlemmets grad mangler, og oversigtsbilleder over graden vises ikke
 
 På smal skærm åbner Directus med menu og sidepanel hen over formularen; tryk på den mørke flade for at lukke dem.
 
@@ -467,6 +538,10 @@ bør der sættes en omvendt proxy med TLS foran, fx Caddy. Det er ikke bygget en
 - Kameravalget i filvælgeren er kun kontrolleret som attribut i siden, ikke på en rigtig telefon.
 - Serveren er kun tilgængelig, mens Chromebooken er tændt, Linux-miljøet kører, og portvideresendelsen er slået til.
 - Arkivar kan ikke slette poster eller filer; det kan kun Administrator.
+- Oversigtsbilleder: genstande over et medlems grad har ingen prik, men kan ses på selve fotoet. Billedets grad skal derfor vælges efter, hvem der må se stedet.
+- Oversigtsbilleder: "flyttet" sættes, når en post flyttes. Flyttes en hel placering (ny overordnet), regnes markeringerne ikke om. Slettes en post, forsvinder dens markeringer med den.
+- Oversigtsbilleder: det gamle billede bliver liggende i filbiblioteket, når et nyt tages (intet slettes automatisk); det er skjult for medlemmer, når det ikke længere bruges.
+- Oversigtsbilleder: knib-zoom og kamera er afprøvet i en browser i mobilstørrelse, ikke på en rigtig telefon (se tjeklisten).
 - Udlån: at "Udlånt til" og "Udlånt den" skal udfyldes, håndhæves i formularen, ikke i API'et. Tidligere udlån gemmes ikke som historik (kun i Directus' revisionshistorik, som administratoren kan se).
 - Kø: der sendes ingen besked til den næste i køen, og køen ryddes ikke ved retur; arkivaren ser køen på posten og fjerner selv pladsen. Dobbelt tilmelding forhindres i brugerfladen, ikke i databasen. Via API'et kan et medlem oprette en plads til et post-id, det ikke må se (det får intet at vide om posten derved).
 - Et medlem kan ikke se, hvem de andre i køen er, men kan via API'et sortere køen efter brugerfeltet og dermed se, om to pladser tilhører samme (ukendte) bruger.

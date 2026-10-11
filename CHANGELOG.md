@@ -2,6 +2,35 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [1.5.0] - 2026-10-11
+
+### Tilføjet
+- Oversigtsbilleder: et foto af en placering (montre, rum, væg …), hvor genstande og dokumenter er markeret med prikker. Collections `oversigtsbilleder` (med egen `min_grad`) og `markeringer` (position i procent, status).
+- Modulet "Oversigtsbilleder": vælg placering trin for trin, billede med nummererede prikker, zoom og panorering (også med to fingre), kort med postens oplysninger og en liste hylde for hylde.
+- Redigering for Arkivar og Administrator: nyt oversigtsbillede fra kamera, fil eller en genstands billede med foreslået grad; markér via placeringens undertræ eller søgning; flyt prikker ved at trække; fjern markering; tæller for, hvor meget der er markeret.
+- Udvidelsen `oversigt-regler`: præcis én post pr. markering og højst én markering pr. post pr. billede; nyt billede sætter markeringerne til "skal placeres igen"; en markeret post, der flyttes ud af billedets placering, bliver "flyttet".
+- "Vis på oversigtsbillede" på genstande og arkivmateriale (feltet Oversigtsbilleder), og genvejen "Oversigtsbillede af …" i Tag billede.
+- Vejledningen: afsnittene "Oversigtsbilleder" (alle) og "Lav og vedligehold oversigtsbilleder" (Arkivar), og "Grader og adgang" nævner billedernes egen grad.
+- Testdata: en montre med tre hylder og bagvæg, syv genstande med grad 1-8, et maleri registreret et andet sted og to oversigtsbilleder.
+
+### Ændret
+- Fil-beskyttelsen dækker også oversigtsbilleder (`i_oversigtsbilleder`): billedfilen følger oversigtsbilledets grad.
+- Medlemmer kan læse oversigtsbilleder efter billedets grad og kun de markeringer, der er bekræftet, og hvis post de selv må se.
+- Arkivar kan oprette og rette oversigtsbilleder og markeringer og fjerne markeringer.
+- `provision.sh` slår modulet til i menuen; på en helt frisk installation lægger den nu hele menuen ind.
+
+### Rettet
+- Testdata (`seed.mjs`) oprettede genstande og arkivmateriale en gang til, hver gang det blev kørt, fordi posterne blev genkendt på nummeret, som tildeles automatisk. De genkendes nu på titlen.
+
+### Testet
+- På en separat testinstans: 24 nye tjek i `verify.sh` (78 i alt består): grad 1 ser rummets billede, men ikke montrens, heller ikke via `/assets/<id>`, thumbnail eller `/files`; grad 5 ser 6 af 7 prikker, og API-svarene nævner hverken titel, nummer eller id på grad 8-genstanden (direkte, via filter og via billedets liste); reglerne for markeringer; nyt billede skjuler markeringerne, til de er bekræftet; flyttet genstand bliver "flyttet", får nyt nummer og bliver "placeret" igen ved flytning tilbage; maleriet uden for undertræet påvirkes ikke.
+- I browseren: medlem (træ, billede, prik, kort, "Åbn post", "Vis på oversigtsbillede" tilbage til den fremhævede prik); arkivar (genvej fra Tag billede, foreslået grad 8, nyt billede via kamera-feltet, markér via hylde, søgning med advarsel, træk prik, skift billede, bekræft, fjern markering, tæller); mobilstørrelse med berøring (knib-zoom, panorering, tryk på prik, kort inden for skærmen).
+
+### Kendt
+- Genstande over et medlems grad har ingen prik, men kan ses på selve fotoet.
+- Flyttes en hel placering, regnes "flyttet" ikke om.
+- Knib-zoom og kamera er ikke afprøvet på en rigtig telefon.
+
 ## [1.4.0] - 2026-10-11
 
 ### Tilføjet

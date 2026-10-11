@@ -106,6 +106,9 @@ const Foto = defineComponent({
             born.value.forEach((p) => k.push(h('button', { style: st.row, onClick: () => ind(p) }, `${p.navn}${p.type ? ' (' + p.type + ')' : ''}`)));
           }
           if (sti.value.length) {
+            // Genvej: samme forløb som i modulet Oversigtsbilleder (et foto af hele placeringen med prikker på genstandene).
+            const her = sti.value[sti.value.length - 1];
+            k.push(h(resolveComponent('router-link'), { to: { path: '/oversigt', query: { placering: her.id, ny: 1 } }, style: { ...st.ghost, display: 'block', textAlign: 'center', textDecoration: 'none', boxSizing: 'border-box', marginBottom: '8px' } }, () => `🗺 Oversigtsbillede af ${her.navn}`));
             k.push(h('div', { style: st.h3 }, `${t.label} her (${items.value.length})`));
             if (!items.value.length) k.push(h('p', { style: 'opacity:.7' }, 'Ingen poster direkte på denne placering.'));
           }

@@ -134,6 +134,62 @@ collections:
       versioning: false
     schema:
       name: genstande_files
+  - collection: markeringer
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: markeringer
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: location_on
+      item_duplication_fields: null
+      note: Prikker på oversigtsbilleder
+      preview_url: null
+      singleton: false
+      sort: 5
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Markeringer
+          singular: Markering
+          translation: Markeringer
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: markeringer
+  - collection: oversigtsbilleder
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: oversigtsbilleder
+      color: null
+      display_template: '{{placering.sti}} {{titel}}'
+      group: null
+      hidden: false
+      icon: pin_drop
+      item_duplication_fields: null
+      note: Fotos af placeringer med markerede genstande
+      preview_url: null
+      singleton: false
+      sort: 4
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Oversigtsbilleder
+          singular: Oversigtsbillede
+          translation: Oversigtsbilleder
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: oversigtsbilleder
   - collection: placeringer
     meta:
       accountability: all
@@ -512,7 +568,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 16
+      sort: 17
       special: null
       translations:
         - language: da-DK
@@ -559,7 +615,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 17
+      sort: 18
       special: null
       translations:
         - language: da-DK
@@ -602,7 +658,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 22
+      sort: 23
       special:
         - date-created
       translations:
@@ -646,7 +702,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 23
+      sort: 24
       special:
         - date-updated
       translations:
@@ -769,7 +825,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 18
+      sort: 19
       special:
         - cast-csv
       translations:
@@ -815,7 +871,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 19
+      sort: 20
       special:
         - cast-csv
       translations:
@@ -887,7 +943,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 20
+      sort: 21
       special: null
       translations:
         - language: da-DK
@@ -930,7 +986,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 21
+      sort: 22
       special: null
       translations:
         - language: da-DK
@@ -974,7 +1030,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 24
+      sort: 25
       special:
         - alias
         - no-data
@@ -985,48 +1041,6 @@ fields:
       validation: null
       validation_message: null
       width: full
-  - collection: arkivmateriale
-    field: dokumenttekst
-    type: text
-    meta:
-      collection: arkivmateriale
-      conditions: null
-      display: null
-      display_options: null
-      field: dokumenttekst
-      group: udtrukket_tekst
-      hidden: false
-      interface: input-multiline
-      note: Teksten fra postens PDF'er (udfyldes automatisk). Der kan søges i den.
-      options: null
-      readonly: true
-      required: false
-      searchable: true
-      sort: 2
-      special: null
-      translations:
-        - language: da-DK
-          translation: Dokumenttekst
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: dokumenttekst
-      table: arkivmateriale
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
   - collection: arkivmateriale
     field: soegbar_tekst
     type: alias
@@ -1306,6 +1320,75 @@ fields:
       translations:
         - language: da-DK
           translation: Kø
+      validation: null
+      validation_message: null
+      width: full
+  - collection: arkivmateriale
+    field: dokumenttekst
+    type: text
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: dokumenttekst
+      group: udtrukket_tekst
+      hidden: false
+      interface: input-multiline
+      note: Teksten fra postens PDF'er (udfyldes automatisk). Der kan søges i den.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations:
+        - language: da-DK
+          translation: Dokumenttekst
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: dokumenttekst
+      table: arkivmateriale
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: paa_oversigtsbilleder
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{oversigtsbillede.titel}}'
+      field: paa_oversigtsbilleder
+      group: null
+      hidden: false
+      interface: oversigt-link
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 16
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Oversigtsbilleder
       validation: null
       validation_message: null
       width: full
@@ -2656,6 +2739,32 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: directus_files
+    field: i_oversigtsbilleder
+    type: alias
+    meta:
+      collection: directus_files
+      conditions: null
+      display: null
+      display_options: null
+      field: i_oversigtsbilleder
+      group: null
+      hidden: true
+      interface: list-o2m
+      note: 'Bruges til at styre adgang: filen følger graden på oversigtsbilledet'
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 4
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Bruges i oversigtsbilleder
+      validation: null
+      validation_message: null
+      width: full
   - collection: directus_roles
     field: skjul_i_menu
     type: json
@@ -2689,6 +2798,8 @@ fields:
             value: docs
           - text: Tag billede
             value: foto
+          - text: Oversigtsbilleder
+            value: oversigt
           - text: Ny placering
             value: ny-placering
       readonly: false
@@ -2832,7 +2943,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 19
+      sort: 20
       special: null
       translations:
         - language: da-DK
@@ -2890,7 +3001,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 4
+      sort: 5
       special: null
       translations:
         - language: da-DK
@@ -2932,7 +3043,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 3
+      sort: 4
       special: null
       translations:
         - language: da-DK
@@ -2974,7 +3085,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 11
       special: null
       translations:
         - language: da-DK
@@ -3040,7 +3151,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 12
+      sort: 13
       special: null
       translations:
         - language: da-DK
@@ -3082,7 +3193,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 13
+      sort: 14
       special: null
       translations:
         - language: da-DK
@@ -3124,7 +3235,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 14
+      sort: 15
       special: null
       translations:
         - language: da-DK
@@ -3166,7 +3277,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 15
+      sort: 16
       special: null
       translations:
         - language: da-DK
@@ -3232,7 +3343,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 16
+      sort: 17
       special: null
       translations:
         - language: da-DK
@@ -3274,7 +3385,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 17
+      sort: 18
       special: null
       translations:
         - language: da-DK
@@ -3322,7 +3433,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 9
+      sort: 10
       special: null
       translations:
         - language: da-DK
@@ -3369,7 +3480,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 20
+      sort: 21
       special: null
       translations:
         - language: da-DK
@@ -3412,7 +3523,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 21
+      sort: 22
       special:
         - date-created
       translations:
@@ -3456,7 +3567,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 22
+      sort: 23
       special:
         - date-updated
       translations:
@@ -3549,7 +3660,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 18
+      sort: 19
       special:
         - files
       translations:
@@ -4577,7 +4688,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 11
+      sort: 12
       special: null
       translations:
         - language: da-DK
@@ -4634,7 +4745,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 5
+      sort: 6
       special: null
       translations:
         - language: da-DK
@@ -4691,7 +4802,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 7
       special: null
       translations:
         - language: da-DK
@@ -4748,7 +4859,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 7
+      sort: 8
       special: null
       translations:
         - language: da-DK
@@ -4790,13 +4901,40 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 8
+      sort: 9
       special:
         - alias
         - no-data
       translations:
         - language: da-DK
           translation: Kø
+      validation: null
+      validation_message: null
+      width: full
+  - collection: genstande
+    field: paa_oversigtsbilleder
+    type: alias
+    meta:
+      collection: genstande
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{oversigtsbillede.titel}}'
+      field: paa_oversigtsbilleder
+      group: null
+      hidden: false
+      interface: oversigt-link
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Oversigtsbilleder
       validation: null
       validation_message: null
       width: full
@@ -4960,6 +5098,761 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: markeringer
+    field: id
+    type: integer
+    meta:
+      collection: markeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: markeringer
+      data_type: integer
+      default_value: nextval('markeringer_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: markeringer
+    field: x
+    type: float
+    meta:
+      collection: markeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: x
+      group: null
+      hidden: false
+      interface: input
+      note: Procent af billedets bredde
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: X
+      validation:
+        _and:
+          - x:
+              _gte: 0
+          - x:
+              _lte: 100
+      validation_message: Angiv et tal fra 0 til 100
+      width: half
+    schema:
+      name: x
+      table: markeringer
+      data_type: real
+      default_value: null
+      max_length: null
+      numeric_precision: 24
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: markeringer
+    field: 'y'
+    type: float
+    meta:
+      collection: markeringer
+      conditions: null
+      display: null
+      display_options: null
+      field: 'y'
+      group: null
+      hidden: false
+      interface: input
+      note: Procent af billedets højde
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 5
+      special: null
+      translations:
+        - language: da-DK
+          translation: 'Y'
+      validation:
+        _and:
+          - 'y':
+              _gte: 0
+          - 'y':
+              _lte: 100
+      validation_message: Angiv et tal fra 0 til 100
+      width: half
+    schema:
+      name: 'y'
+      table: markeringer
+      data_type: real
+      default_value: null
+      max_length: null
+      numeric_precision: 24
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: markeringer
+    field: status
+    type: string
+    meta:
+      collection: markeringer
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: Placeret
+            value: placeret
+          - text: Skal placeres igen
+            value: skal_placeres
+          - text: Flyttet
+            value: flyttet
+        showAsDot: false
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: Placeret
+            value: placeret
+          - text: Skal placeres igen
+            value: skal_placeres
+          - text: Flyttet
+            value: flyttet
+      readonly: false
+      required: true
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Status
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: status
+      table: markeringer
+      data_type: character varying
+      default_value: placeret
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: markeringer
+    field: oversigtsbillede
+    type: integer
+    meta:
+      collection: markeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{placering.sti}} {{titel}}'
+      field: oversigtsbillede
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{placering.sti}} {{titel}}'
+      readonly: false
+      required: true
+      searchable: true
+      sort: 1
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Oversigtsbillede
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: oversigtsbillede
+      table: markeringer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: oversigtsbilleder
+      foreign_key_column: id
+  - collection: markeringer
+    field: genstand
+    type: integer
+    meta:
+      collection: markeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{inventarnummer}} – {{titel}}'
+      field: genstand
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{inventarnummer}} – {{titel}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Genstand
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: genstand
+      table: markeringer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: genstande
+      foreign_key_column: id
+  - collection: markeringer
+    field: arkivmateriale
+    type: integer
+    meta:
+      collection: markeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{arkivnummer}} – {{titel}}'
+      field: arkivmateriale
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{arkivnummer}} – {{titel}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Arkivmateriale
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: arkivmateriale
+      table: markeringer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+  - collection: oversigtsbilleder
+    field: id
+    type: integer
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: oversigtsbilleder
+      data_type: integer
+      default_value: nextval('oversigtsbilleder_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: titel
+    type: string
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: null
+      display_options: null
+      field: titel
+      group: null
+      hidden: false
+      interface: input
+      note: Valgfri, fx "Forside" eller "Bagvæg"
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations:
+        - language: da-DK
+          translation: Titel
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: titel
+      table: oversigtsbilleder
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: min_grad
+    type: integer
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: null
+      display_options: null
+      field: min_grad
+      group: null
+      hidden: false
+      interface: slider
+      note: >-
+        Laveste grad der må se billedet og dets markeringer (1 = alle
+        medlemmer). Vælg efter, hvem der har adgang til at se stedet i
+        virkeligheden.
+      options:
+        alwaysShowValue: true
+        maxValue: 10
+        minValue: 1
+        stepInterval: 1
+      readonly: false
+      required: true
+      searchable: true
+      sort: 4
+      special: null
+      translations:
+        - language: da-DK
+          translation: Min. grad
+      validation:
+        _and:
+          - min_grad:
+              _gte: 1
+          - min_grad:
+              _lte: 10
+      validation_message: Graden skal være et helt tal fra 1 til 10
+      width: full
+    schema:
+      name: min_grad
+      table: oversigtsbilleder
+      data_type: integer
+      default_value: 1
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: billede_skiftet
+    type: timestamp
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: null
+      display_options: null
+      field: billede_skiftet
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Billede skiftet
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: billede_skiftet
+      table: oversigtsbilleder
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: noter
+    type: text
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: null
+      display_options: null
+      field: noter
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special: null
+      translations:
+        - language: da-DK
+          translation: Noter
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: noter
+      table: oversigtsbilleder
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: oprettet
+    type: timestamp
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: oprettet
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 8
+      special:
+        - date-created
+      translations:
+        - language: da-DK
+          translation: Oprettet
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: oprettet
+      table: oversigtsbilleder
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: opdateret
+    type: timestamp
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: opdateret
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 9
+      special:
+        - date-updated
+      translations:
+        - language: da-DK
+          translation: Opdateret
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: opdateret
+      table: oversigtsbilleder
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: oversigtsbilleder
+    field: placering
+    type: integer
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{navn}}'
+      field: placering
+      group: null
+      hidden: false
+      interface: placering-vaelger
+      note: null
+      options:
+        template: '{{navn}}'
+      readonly: false
+      required: true
+      searchable: true
+      sort: 1
+      special:
+        - m2o
+      translations:
+        - language: da-DK
+          translation: Placering
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: placering
+      table: oversigtsbilleder
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: placeringer
+      foreign_key_column: id
+  - collection: oversigtsbilleder
+    field: billede
+    type: uuid
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: image
+      display_options: null
+      field: billede
+      group: null
+      hidden: false
+      interface: file-image
+      note: >-
+        Skiftes billedet, skal markeringerne bekræftes igen i modulet
+        Oversigtsbilleder
+      options: null
+      readonly: false
+      required: true
+      searchable: true
+      sort: 2
+      special:
+        - file
+      translations:
+        - language: da-DK
+          translation: Billede
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: billede
+      table: oversigtsbilleder
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: oversigtsbilleder
+    field: markeringer
+    type: alias
+    meta:
+      collection: oversigtsbilleder
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{genstand.inventarnummer}}{{arkivmateriale.arkivnummer}} ({{status}})'
+      field: markeringer
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{genstand.inventarnummer}}{{arkivmateriale.arkivnummer}} ({{status}})'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Markeringer
+      validation: null
+      validation_message: null
+      width: full
   - collection: placeringer
     field: id
     type: integer
@@ -5456,6 +6349,36 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: placeringer
+    field: oversigtsbilleder
+    type: alias
+    meta:
+      collection: placeringer
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{titel}} (grad {{min_grad}})'
+      field: oversigtsbilleder
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableCreate: false
+        enableSelect: false
+        template: '{{titel}} (grad {{min_grad}})'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 9
+      special:
+        - o2m
+      translations:
+        - language: da-DK
+          translation: Oversigtsbilleder
+      validation: null
+      validation_message: null
+      width: full
   - collection: reservationer
     field: id
     type: integer
@@ -5889,6 +6812,111 @@ relations:
       constraint_name: genstande_files_directus_files_id_foreign
       on_update: NO ACTION
       on_delete: CASCADE
+  - collection: markeringer
+    field: oversigtsbillede
+    related_collection: oversigtsbilleder
+    meta:
+      junction_field: null
+      many_collection: markeringer
+      many_field: oversigtsbillede
+      one_allowed_collections: null
+      one_collection: oversigtsbilleder
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: markeringer
+      sort_field: null
+    schema:
+      table: markeringer
+      column: oversigtsbillede
+      foreign_key_table: oversigtsbilleder
+      foreign_key_column: id
+      constraint_name: markeringer_oversigtsbillede_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: markeringer
+    field: genstand
+    related_collection: genstande
+    meta:
+      junction_field: null
+      many_collection: markeringer
+      many_field: genstand
+      one_allowed_collections: null
+      one_collection: genstande
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: paa_oversigtsbilleder
+      sort_field: null
+    schema:
+      table: markeringer
+      column: genstand
+      foreign_key_table: genstande
+      foreign_key_column: id
+      constraint_name: markeringer_genstand_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: markeringer
+    field: arkivmateriale
+    related_collection: arkivmateriale
+    meta:
+      junction_field: null
+      many_collection: markeringer
+      many_field: arkivmateriale
+      one_allowed_collections: null
+      one_collection: arkivmateriale
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: paa_oversigtsbilleder
+      sort_field: null
+    schema:
+      table: markeringer
+      column: arkivmateriale
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+      constraint_name: markeringer_arkivmateriale_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: oversigtsbilleder
+    field: placering
+    related_collection: placeringer
+    meta:
+      junction_field: null
+      many_collection: oversigtsbilleder
+      many_field: placering
+      one_allowed_collections: null
+      one_collection: placeringer
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: oversigtsbilleder
+      sort_field: null
+    schema:
+      table: oversigtsbilleder
+      column: placering
+      foreign_key_table: placeringer
+      foreign_key_column: id
+      constraint_name: oversigtsbilleder_placering_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: oversigtsbilleder
+    field: billede
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: oversigtsbilleder
+      many_field: billede
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: i_oversigtsbilleder
+      sort_field: null
+    schema:
+      table: oversigtsbilleder
+      column: billede
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: oversigtsbilleder_billede_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
   - collection: placeringer
     field: overordnet
     related_collection: placeringer

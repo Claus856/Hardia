@@ -9,12 +9,12 @@ if (!TESTBRUGER_PASSWORD) { console.error('TESTBRUGER_PASSWORD mangler i .env (k
 const api = await adminClient();
 const token = await login(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-async function uploadPng(title, grad, dots) {
+async function uploadPng(title, grad, dots, stoerrelse = {}) {
   const found = await api('GET', `/files?filter[title][_eq]=${encodeURIComponent(title)}&limit=1&fields=id`);
   if (found.length) return found[0].id;
   const form = new FormData();
   form.append('title', title);
-  form.append('file', new Blob([makePng({ bg: COLORS[grad], digit: grad, dots })], { type: 'image/png' }), `${title.replace(/\W+/g, '_')}.png`);
+  form.append('file', new Blob([makePng({ bg: COLORS[grad], digit: grad, dots, ...stoerrelse })], { type: 'image/png' }), `${title.replace(/\W+/g, '_')}.png`);
   const res = await fetch(`${DIRECTUS_URL}/files`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form });
   if (!res.ok) throw new Error(`upload ${title}: ${res.status} ${await res.text()}`);
   return (await res.json()).data.id;
@@ -48,7 +48,7 @@ const genstande = [
 for (const [nr, titel, grad, kategori, placering, status, antal] of genstande) {
   const billeder = [];
   for (let i = 1; i <= antal; i++) billeder.push({ directus_files_id: await uploadPng(`${nr} billede ${i}`, grad, i) });
-  await ensure('genstande', 'inventarnummer', {
+  await ensure('genstande', 'titel', {   // nummeret tildeles efter placeringen, så posten kendes på titlen
     inventarnummer: nr, titel, beskrivelse: `Testpost med min_grad ${grad}.`, kategori, status, placering,
     datering: 'ca. 1920', materiale: 'Træ og messing', maal: 'H 20 × B 15 cm', stand: 'god',
     proveniens: 'Opdigtet testdata', min_grad: grad, noter: 'Slettes før produktion', billeder,
@@ -63,7 +63,7 @@ const arkiv = [
 ];
 for (const [nr, titel, grad, dokumenttype] of arkiv) {
   const filer = [{ directus_files_id: await uploadPng(`${nr} scanning`, grad, 1) }];
-  await ensure('arkivmateriale', 'arkivnummer', {
+  await ensure('arkivmateriale', 'titel', {
     arkivnummer: nr, titel, dokumenttype, dato: '1950-05-17', beskrivelse: `Testpost med min_grad ${grad}.`,
     placering: hylde2, min_grad: grad, filer,
   });
@@ -80,6 +80,39 @@ for (const [titel, grad] of boeger) {
     omslagsbillede: await uploadPng(`${titel} omslag`, grad, 1),
   });
 }
+
+// Oversigtsbilleder: en montre med tre hylder og bagvæg og syv genstande med forskellig grad (billedet har grad 3),
+// og et rum (grad 1), hvor et "maleri", der er registreret et andet sted, er markeret.
+const montreDele = {};
+for (const [navn, kode, type] of [['hylde 1', 'H1', 'hylde'], ['hylde 2', 'H2', 'hylde'], ['hylde 3', 'H3', 'hylde'], ['bagvæg', 'BV', 'vaeg']]) {
+  montreDele[kode] = await place(`Montre 1, ${navn}`, kode, type, montre1, 'Testdata til oversigtsbilleder');
+}
+const iMontre = [
+  ['Montre-test: hammer', 1, 'H1', 20, 25], ['Montre-test: vinkel', 1, 'H1', 60, 25], ['Montre-test: passer', 2, 'H2', 30, 50],
+  ['Montre-test: sværd', 3, 'H2', 70, 50], ['Montre-test: bæger', 5, 'H3', 25, 75], ['Montre-test: kæde', 5, 'H3', 55, 75],
+  ['Montre-test: ritualbog', 8, 'BV', 85, 15],
+];
+const montreIds = [];
+for (const [titel, grad, del] of iMontre) {
+  montreIds.push(await ensure('genstande', 'titel', {
+    titel, beskrivelse: `Testgenstand i montren med min_grad ${grad}.`, kategori: 'regalier', status: 'udstillet',
+    placering: montreDele[del], min_grad: grad, billeder: [{ directus_files_id: await uploadPng(`${titel} billede`, grad, 1) }],
+  }));
+}
+const maleri = await ensure('genstande', 'titel', {
+  titel: 'Maleri-test: logens stifter', beskrivelse: 'Hænger i udstillingsrummet, men er registreret i arkivrummet.',
+  kategori: 'andet', status: 'udstillet', placering: reolA, min_grad: 1,
+});
+async function oversigt(titel, placering, grad, markeringer) {
+  const found = await api('GET', `/items/oversigtsbilleder?filter[titel][_eq]=${encodeURIComponent(titel)}&limit=1&fields=id`);
+  if (found.length) { console.log(`= oversigtsbillede ${titel}`); return; }
+  const billede = await uploadPng(`Oversigt ${titel}`, grad, 3, { width: 1600, height: 1200 });
+  const o = await api('POST', '/items/oversigtsbilleder', { titel, placering, billede, min_grad: grad });
+  for (const [genstand, x, y] of markeringer) await api('POST', '/items/markeringer', { oversigtsbillede: o.id, genstand, x, y });
+  console.log(`+ oversigtsbillede ${titel} (${markeringer.length} markeringer)`);
+}
+await oversigt('Test-forside', montre1, 3, iMontre.map(([, , , x, y], i) => [montreIds[i], x, y]));
+await oversigt('Test-rum', salen, 1, [[maleri, 30, 30], [montreIds[0], 70, 60]]);
 
 // Testbrugere
 const roles = Object.fromEntries((await api('GET', '/roles?limit=-1')).map((r) => [r.name, r.id]));

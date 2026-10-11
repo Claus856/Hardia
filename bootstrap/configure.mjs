@@ -17,7 +17,7 @@ const GRAD_OK = { min_grad: { _lte: '$CURRENT_USER.grad' } };
 // De tre i_*-aliasfelter SKAL med: Directus skjuler en relation (og appen viser "relationship is not configured
 // properly") hvis brugeren ikke må læse relationens felt på begge sider.
 const FILE_FIELDS_FOR_MEDLEM = [
-  'i_genstande', 'i_arkivmateriale', 'i_bibliotek',
+  'i_genstande', 'i_arkivmateriale', 'i_bibliotek', 'i_oversigtsbilleder',
   'id', 'title', 'description', 'filename_download', 'type', 'folder', 'filesize', 'width', 'height', 'duration',
   'tags', 'embed', 'focal_point_x', 'focal_point_y', 'created_on', 'modified_on', 'uploaded_on',
 ];
@@ -65,18 +65,22 @@ if (globale.length) await api('PATCH', `/presets/${globale[0].id}`, placeringVis
 else await api('POST', '/presets', placeringVisning);
 console.log('= standardvisning for placeringer');
 
-// --- Menuen: nye moduler er slået fra som standard. Søg og Vejledning skal stå lige efter Indhold. -------------
-// (På en helt frisk installation er module_bar tom; slå da modulerne til under Indstillinger -> Projektindstillinger.)
-const { module_bar: menu } = await api('GET', '/settings?fields=module_bar');
-if (Array.isArray(menu)) {
-  for (const id of ['vejledning', 'soeg']) {
+// --- Menuen: nye moduler er slået fra som standard. Søg, Oversigtsbilleder og Vejledning skal stå lige efter Indhold.
+// På en helt frisk installation er module_bar tom (Directus bruger sin standardmenu); da lægges hele menuen ind her.
+const EGNE = ['soeg', 'oversigt', 'vejledning'];
+let { module_bar: menu } = await api('GET', '/settings?fields=module_bar');
+if (!Array.isArray(menu) || !menu.length) {
+  menu = ['content', ...EGNE, 'foto', 'ny-placering', 'users', 'files', 'insights', 'settings']
+    .map((id) => ({ type: 'module', id, enabled: true, ...(id === 'settings' ? { locked: true } : {}) }));
+} else {
+  for (const id of [...EGNE].reverse()) {
     const punkt = menu.find((m) => m.id === id);
     if (punkt) punkt.enabled = true;
     else menu.splice(menu.findIndex((m) => m.id === 'content') + 1, 0, { type: 'module', id, enabled: true });
   }
-  await api('PATCH', '/settings', { module_bar: menu });
-  console.log('= modulerne Søg og Vejledning er slået til');
 }
+await api('PATCH', '/settings', { module_bar: menu });
+console.log('= modulerne Søg, Oversigtsbilleder og Vejledning er slået til');
 
 // --- Policies og roller ----------------------------------------------------------------------------------------
 const arkivarPolicy = await upsertByName('policies', 'Arkivar', {
@@ -108,13 +112,15 @@ const EGET_KODEORD = { collection: 'directus_users', action: 'update', fields: [
 // --- Arkivar: opret + redigér (ikke slet, jf. kravet). Junction-rækker skal kunne slettes for at fjerne et billede
 //     fra en post uden at slette selve filen. -------------------------------------------------------------------
 const arkivarRows = [
-  ...[...MAIN, 'placeringer'].flatMap((collection) =>
+  ...[...MAIN, 'placeringer', 'oversigtsbilleder', 'markeringer'].flatMap((collection) =>
     ['create', 'read', 'update'].map((action) => ({ collection, action }))),
   ...Object.keys(JUNCTIONS).flatMap((collection) =>
     ['create', 'read', 'update', 'delete'].map((action) => ({ collection, action }))),
   ...['create', 'read', 'update'].map((action) => ({ collection: 'directus_files', action })),
   { collection: 'directus_folders', action: 'read' },
   EGET_KODEORD,
+  // En markering må fjernes igen (kun prikken; posten og billedet kan arkivaren ikke slette).
+  { collection: 'markeringer', action: 'delete' },
   // Køen: arkivaren ser hvem der står i kø (derfor navnene på brugerne), kan fjerne en plads og selv stille sig i kø.
   { collection: 'reservationer', action: 'create', fields: KOE_FELTER },
   { collection: 'reservationer', action: 'read' },
@@ -142,6 +148,18 @@ const medlemRows = [
     permissions: { _or: KOE_FELTER.map((felt) => ({ [felt]: GRAD_OK })) },
   },
   { collection: 'placeringer', action: 'read' },
+  // Oversigtsbilleder har deres egen grad (hvem må se rummet/montren). En markering ses kun, når billedet er synligt,
+  // markeringen er bekræftet (ikke "skal placeres igen" eller "flyttet"), OG den markerede post selv er synlig efter
+  // sin egen grad - så en prik aldrig røber, at der står noget, medlemmet ikke må se.
+  { collection: 'oversigtsbilleder', action: 'read', permissions: GRAD_OK },
+  {
+    collection: 'markeringer', action: 'read',
+    permissions: { _and: [
+      { oversigtsbillede: GRAD_OK },
+      { status: { _eq: 'placeret' } },
+      { _or: [{ genstand: GRAD_OK }, { arkivmateriale: GRAD_OK }] },
+    ] },
+  },
   EGET_KODEORD,
   { collection: 'directus_folders', action: 'read' }, // ellers fejler fil-modulet med en "Forbudt"-dialog
   // Junction-rækkerne røber hvilke filer der hører til en post, så de følger postens grad.
@@ -156,6 +174,7 @@ const medlemRows = [
         { i_genstande: { genstande_id: GRAD_OK } },
         { i_arkivmateriale: { arkivmateriale_id: GRAD_OK } },
         { i_bibliotek: GRAD_OK },
+        { i_oversigtsbilleder: GRAD_OK },
       ],
     },
   },

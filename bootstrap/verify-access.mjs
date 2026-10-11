@@ -296,5 +296,117 @@ try {
   }
 }
 
+// ---- 7. Oversigtsbilleder: egen grad på billedet, og en prik ses kun, når posten selv må ses ----------------------
+{
+  const arkivar = client(tokens.arkivar);
+  const billeder = await admin('GET', '/items/oversigtsbilleder?limit=-1&fields=id,titel,min_grad,billede,placering&filter[titel][_starts_with]=Test-');
+  const montre = billeder.find((b) => b.titel === 'Test-forside');
+  const rum = billeder.find((b) => b.titel === 'Test-rum');
+  check('facit: to test-oversigtsbilleder (montre grad 3, rum grad 1)', montre?.min_grad === 3 && rum?.min_grad === 1, JSON.stringify(billeder));
+  const facit = await admin('GET', `/items/markeringer?limit=-1&fields=id,status,genstand.id,genstand.titel,genstand.min_grad,genstand.placering,genstand.inventarnummer&filter[oversigtsbillede][_eq]=${montre.id}`);
+  const hemmelig = facit.find((m) => m.genstand.min_grad === 8);
+  const prikker = (user, billede, ekstra = '') => http('GET', `/items/markeringer?limit=-1&fields=id,status,x,y,genstand.id,genstand.titel,genstand.inventarnummer,genstand.min_grad${ekstra}&filter[oversigtsbillede][_eq]=${billede}`, { token: tokens[user] });
+  const filStatus = async (user, fil) => (await Promise.all([
+    http('GET', `/assets/${fil}`, { token: tokens[user] }), http('GET', `/assets/${fil}`, { query: `?access_token=${tokens[user]}` }),
+    http('GET', `/assets/${fil}`, { token: tokens[user], query: '?key=visning' }), http('GET', `/files/${fil}`, { token: tokens[user] }),
+  ])).map((r) => r.status).join(',');
+
+  // 1. Grad 1 ser rummets billede, men ikke montrens - hverken posten eller filen
+  const set1 = (await http('GET', '/items/oversigtsbilleder?limit=-1&fields=id,titel', { token: tokens.medlem1 })).json.data.filter((b) => b.titel?.startsWith('Test-'));
+  check('medlem1 ser rummets oversigtsbillede, men ikke montrens (grad 3)', set1.length === 1 && set1[0].id === rum.id, JSON.stringify(set1));
+  check('medlem1 kan ikke hente montrens oversigtsbillede direkte', (await http('GET', `/items/oversigtsbilleder/${montre.id}`, { token: tokens.medlem1 })).status === 403);
+  check('fil-beskyttelse: medlem1 får 403 på montrens billedfil (assets, ?access_token, thumbnail, /files)', await filStatus('medlem1', montre.billede) === '403,403,403,403', await filStatus('medlem1', montre.billede));
+  check('fil-beskyttelse: medlem1 kan hente rummets billedfil', await filStatus('medlem1', rum.billede) === '200,200,200,200', await filStatus('medlem1', rum.billede));
+  check('fil-beskyttelse: medlem5 kan hente begge billedfiler', await filStatus('medlem5', montre.billede) === '200,200,200,200' && await filStatus('medlem5', rum.billede) === '200,200,200,200');
+  const m1montre = await prikker('medlem1', montre.id);
+  check('medlem1 ser ingen markeringer på montrens billede (heller ikke for genstande med grad 1)', m1montre.json.data.length === 0, JSON.stringify(m1montre.json?.data));
+  check('medlem1 ser begge markeringer på rummets billede', (await prikker('medlem1', rum.id)).json.data.length === 2);
+
+  // 2. Grad 5 ser kun prikker for genstande til og med grad 5, og intet om grad 8-genstanden
+  const m5 = await prikker('medlem5', montre.id);
+  check('medlem5 ser 6 af montrens 7 markeringer (ikke grad 8-genstanden)',
+    facit.length === 7 && m5.json.data.length === 6 && m5.json.data.every((m) => m.genstand && m.genstand.min_grad <= 5), `${m5.json?.data?.length} af ${facit.length}`);
+  const raa = JSON.stringify(m5.json.data);
+  check('API-svaret til medlem5 nævner hverken titel, nummer eller id på grad 8-genstanden',
+    !raa.includes(hemmelig.genstand.titel) && !raa.includes(hemmelig.genstand.inventarnummer) && !m5.json.data.some((m) => m.id === hemmelig.id));
+  const direkte = await http('GET', `/items/markeringer/${hemmelig.id}`, { token: tokens.medlem5 });
+  const viaFilter = await http('GET', `/items/markeringer?fields=id&filter[genstand][_eq]=${hemmelig.genstand.id}`, { token: tokens.medlem5 });
+  const viaBillede = await http('GET', `/items/oversigtsbilleder/${montre.id}?fields=id,markeringer.id,markeringer.genstand.titel`, { token: tokens.medlem5 });
+  check('medlem5 kan heller ikke nå den skjulte markering direkte, via filter eller via billedets liste',
+    direkte.status === 403 && viaFilter.json.data.length === 0 && viaBillede.json.data.markeringer.length === 6 && !JSON.stringify(viaBillede.json.data).includes(hemmelig.genstand.titel),
+    `${direkte.status}, ${viaFilter.json?.data?.length}, ${viaBillede.json?.data?.markeringer?.length}`);
+  check('arkivar ser alle 7 markeringer', (await prikker('arkivar', montre.id)).json.data.length === 7);
+
+  // Regler og skrivebeskyttelse
+  const hammer = facit.find((m) => m.genstand.titel.includes('hammer'));
+  const dublet = await http('POST', '/items/markeringer', { token: tokens.arkivar, body: { oversigtsbillede: montre.id, genstand: hammer.genstand.id, x: 5, y: 5 } });
+  const ingen = await http('POST', '/items/markeringer', { token: tokens.arkivar, body: { oversigtsbillede: montre.id, x: 5, y: 5 } });
+  const ark = posts.find((p) => p.c === 'arkivmateriale');
+  const begge = await http('POST', '/items/markeringer', { token: tokens.arkivar, body: { oversigtsbillede: rum.id, genstand: hemmelig.genstand.id, arkivmateriale: ark.id, x: 5, y: 5 } });
+  const udenfor = await http('PATCH', `/items/markeringer/${hammer.id}`, { token: tokens.arkivar, body: { x: 150 } });
+  check('markering afvises: samme genstand to gange, ingen post, både genstand og arkivmateriale, x uden for 0-100',
+    [dublet, ingen, begge, udenfor].every((r) => r.status === 400), [dublet, ingen, begge, udenfor].map((r) => r.status).join(','));
+  const skriv = await http('POST', '/items/markeringer', { token: tokens.medlem5, body: { oversigtsbillede: rum.id, genstand: hemmelig.genstand.id, x: 5, y: 5 } });
+  const ret = await http('PATCH', `/items/markeringer/${hammer.id}`, { token: tokens.medlem5, body: { x: 1 } });
+  check('medlem kan ikke oprette eller rette markeringer', skriv.status === 403 && ret.status === 403, `${skriv.status}/${ret.status}`);
+  const tmp = await arkivar('POST', '/items/markeringer', { oversigtsbillede: rum.id, arkivmateriale: ark.id, x: 10, y: 10 });
+  const fjern = await http('DELETE', `/items/markeringer/${tmp.id}`, { token: tokens.arkivar });
+  const sletBillede = await http('DELETE', `/items/oversigtsbilleder/${rum.id}`, { token: tokens.arkivar });
+  check('arkivar kan markere arkivmateriale og fjerne en markering, men ikke slette et oversigtsbillede', fjern.status === 204 && sletBillede.status === 403, `${fjern.status}/${sletBillede.status}`);
+  if (process.env.TEKSTSERVICE_TOKEN) {
+    const t = await Promise.all(['oversigtsbilleder', 'markeringer'].map((c) => http('GET', `/items/${c}`, { token: process.env.TEKSTSERVICE_TOKEN })));
+    check('tekstservicen har ingen adgang til oversigtsbilleder og markeringer', t.every((r) => r.status === 403), t.map((r) => r.status).join(','));
+  }
+
+  // 4. Nyt billede -> markeringerne skal placeres igen og er skjult for medlemmer, til de er bekræftet
+  let nyFil;
+  try {
+    const f = new FormData();
+    f.append('title', 'TMP nyt oversigtsbillede');
+    f.append('file', new Blob([makePng({ digit: 3, dots: 2, bg: [90, 60, 120] })], { type: 'image/png' }), 'nyt.png');
+    nyFil = (await (await fetch(`${BASE}/files`, { method: 'POST', headers: { Authorization: `Bearer ${tokens.arkivar}` }, body: f })).json()).data.id;
+    await arkivar('PATCH', `/items/oversigtsbilleder/${montre.id}`, { billede: nyFil });
+    const efter = await admin('GET', `/items/markeringer?limit=-1&fields=id,status&filter[oversigtsbillede][_eq]=${montre.id}`);
+    const skiftet = (await admin('GET', `/items/oversigtsbilleder/${montre.id}?fields=billede_skiftet`)).billede_skiftet;
+    check('nyt billede: alle 7 markeringer er "skal placeres igen", og tidspunktet er gemt', efter.length === 7 && efter.every((m) => m.status === 'skal_placeres') && !!skiftet, JSON.stringify(efter.map((m) => m.status)));
+    check('nyt billede: medlem5 ser ingen markeringer, før de er bekræftet', (await prikker('medlem5', montre.id)).json.data.length === 0);
+    check('nyt billede: den nye fil følger billedets grad, og den gamle er ikke længere synlig for medlem5',
+      await filStatus('medlem5', nyFil) === '200,200,200,200' && await filStatus('medlem1', nyFil) === '403,403,403,403' && (await http('GET', `/assets/${montre.billede}`, { token: tokens.medlem5 })).status === 403);
+    await arkivar('PATCH', '/items/markeringer', { keys: efter.map((m) => m.id), data: { status: 'placeret' } });
+    check('bekræftede markeringer er synlige for medlem5 igen', (await prikker('medlem5', montre.id)).json.data.length === 6);
+  } finally {
+    await admin('PATCH', `/items/oversigtsbilleder/${montre.id}`, { billede: montre.billede }).catch(() => {});
+    await admin('PATCH', '/items/markeringer', { keys: facit.map((m) => m.id), data: { status: 'placeret' } }).catch(() => {});
+    if (nyFil) await admin('DELETE', `/files/${nyFil}`).catch(() => {});
+  }
+
+  // 5. En markeret genstand flyttes ud af billedets placering -> "flyttet" og skjult for medlemmer
+  const andetSted = (await admin('GET', '/items/placeringer?filter[navn][_eq]=Reol%20A&fields=id'))[0].id;
+  const maleri = (await admin('GET', `/items/markeringer?limit=-1&fields=id,genstand.id,genstand.placering&filter[oversigtsbillede][_eq]=${rum.id}`)).find((m) => m.genstand.id !== hammer.genstand.id);
+  try {
+    await arkivar('PATCH', `/items/genstande/${hammer.genstand.id}`, { placering: andetSted });
+    const flyttet = (await admin('GET', `/items/markeringer?limit=-1&fields=id,status,oversigtsbillede&filter[genstand][_eq]=${hammer.genstand.id}`)).filter((m) => [montre.id, rum.id].includes(m.oversigtsbillede));
+    // Nummeret regnes om lige efter gemningen (udvidelsen nummer), så vent et øjeblik på det.
+    let nummer;
+    for (let n = 0; n < 20; n++) {
+      nummer = (await admin('GET', `/items/genstande/${hammer.genstand.id}?fields=inventarnummer`)).inventarnummer;
+      if (nummer !== hammer.genstand.inventarnummer) break;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    check('flyttet genstand: markeringerne på begge billeder er "flyttet", og genstanden har fået nyt nummer',
+      flyttet.length === 2 && flyttet.every((m) => m.status === 'flyttet') && nummer !== hammer.genstand.inventarnummer, `${JSON.stringify(flyttet.map((m) => m.status))} ${hammer.genstand.inventarnummer} -> ${nummer}`);
+    const ser5 = (await prikker('medlem5', montre.id)).json.data;
+    check('flyttet genstand: medlem5 ser ikke markeringen, men arkivar gør', ser5.length === 5 && !ser5.some((m) => m.id === hammer.id) && (await prikker('arkivar', montre.id)).json.data.some((m) => m.id === hammer.id && m.status === 'flyttet'));
+    // En post, der med vilje er markeret uden for billedets placering (maleriet), bliver ikke "flyttet" af at flytte rundt derude.
+    await arkivar('PATCH', `/items/genstande/${maleri.genstand.id}`, { placering: (await admin('GET', '/items/placeringer?filter[navn][_eq]=Arkivrummet&fields=id'))[0].id });
+    check('maleriet (registreret et andet sted) er stadig "placeret" efter en flytning uden for billedet', (await admin('GET', `/items/markeringer/${maleri.id}?fields=status`)).status === 'placeret');
+  } finally {
+    await admin('PATCH', `/items/genstande/${hammer.genstand.id}`, { placering: hammer.genstand.placering }).catch(() => {});
+    await admin('PATCH', `/items/genstande/${maleri.genstand.id}`, { placering: maleri.genstand.placering }).catch(() => {});
+  }
+  const tilbage = await admin('GET', `/items/markeringer?limit=-1&fields=status&filter[genstand][_eq]=${hammer.genstand.id}`);
+  check('flyttes genstanden tilbage, er markeringerne "placeret" igen', tilbage.every((m) => m.status === 'placeret'), JSON.stringify(tilbage));
+}
+
 console.log(failures ? `\n${failures} TEST(S) FEJLEDE` : '\nAlle tests bestået.');
 process.exit(failures ? 1 : 0);

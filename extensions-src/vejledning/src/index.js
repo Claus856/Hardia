@@ -61,6 +61,7 @@ const AFSNIT = [
   { t: 'Grader og adgang', b: [
     { max: 0, v: 'Hver post har en mindste-grad. Du ser posten og dens billeder, hvis din egen grad er lig med eller højere end postens. Når du får en højere grad, sætter administratoren den på din bruger, og de nye poster dukker op af sig selv.' },
     { n: 1, v: 'Hver post har feltet Min. grad. Et medlem ser kun posten og dens billeder, hvis medlemmets grad er lig med eller højere. Hæver du Min. grad på en post, mister medlemmer under graden straks adgangen, også til billederne.' },
+    'Oversigtsbilleder har deres egen grad, som svarer til, hvem der må se rummet eller montren i virkeligheden. På billedet er der kun prikker ved de genstande, din egen grad giver adgang til.',
     { n: 1, v: 'Et billede, der ikke er knyttet til nogen post, er skjult for medlemmer. Vælg derfor Min. grad med omhu, og knyt altid billeder til den rigtige post.' },
   ] },
 
@@ -84,6 +85,41 @@ const AFSNIT = [
       'Arkivmateriale får arkivnummer automatisk ud fra placeringen, ligesom genstande. Scanninger lægges i feltet med filer.',
       'Bøger har ikke noget automatisk nummer. Angiv titel, forfatter og antal eksemplarer, og læg gerne et omslagsbillede på.',
       'Husk Min. grad på hver post.',
+    ] },
+  ] },
+
+  { t: 'Oversigtsbilleder', b: [
+    'Et oversigtsbillede er et foto af en montre, et rum, en væg eller et skab, hvor genstandene er markeret med prikker. Det ligger under Oversigtsbilleder (nålen i menuen).',
+    { trin: [
+      'Vælg placeringen trin for trin. Placeringer med oversigtsbilleder er fremhævet med et kamera og antallet.',
+      'Tryk på billedet for at åbne det.',
+      'Tryk på en prik for at se genstandens nummer, titel, status og beskrivelse. Åbn post viser hele registreringen.',
+      'Listen under billedet viser de samme genstande hylde for hylde. Tryk på en linje, så fremhæves prikken på billedet.',
+    ] },
+    { l: [
+      'Zoom med to fingre på mobilen, med musehjulet på computeren eller med knapperne + og −. Træk for at flytte udsnittet. Hele billedet zoomer ud igen.',
+      'Fra en genstand eller et dokument fører knappen Vis på oversigtsbillede direkte til billedet med prikken fremhævet.',
+    ] },
+    { max: 0, v: 'Du ser kun de oversigtsbilleder og de prikker, din grad giver adgang til. Der kan derfor stå genstande på billedet uden prik.' },
+  ] },
+
+  { t: 'Lav og vedligehold oversigtsbilleder', n: 1, b: [
+    'Genstandene skal være registreret først. Oversigtsbilledet handler kun om at tage billedet og pege på dem.',
+    { trin: [
+      'Åbn Oversigtsbilleder, gå til placeringen (fx montren), og tryk Nyt oversigtsbillede. Fra Tag billede er der en genvej, når du står på en placering.',
+      'Skriv evt. en titel (Forside, Bagvæg), og vælg Min. grad. Forslaget er den højeste grad blandt det, der står på placeringen; vælg graden efter, hvem der har adgang til at se stedet i virkeligheden.',
+      'Tryk Tag billedet. Stå lige foran, hold telefonen vandret og lige, og sørg for godt lys uden genskin i glasset. Hele montren skal med.',
+      'Tryk på en genstand på billedet. Vælg den i listen, som viser hylderne og deres genstande, eller søg på nummer eller titel.',
+      'Gentag, til tælleren viser, at alt er markeret. Vis kun umarkerede gør det let at se, hvad der mangler.',
+      'Tryk Færdig.',
+    ] },
+    { l: [
+      'Flyt en prik ved at trække den (tryk først Redigér markeringer). Fjern markering fjerner kun prikken, aldrig selve posten.',
+      'En genstand, der er registreret et andet sted (fx et maleri på væggen), kan markeres ved at søge efter den. Den vises med en advarsel, og det er i orden.',
+      'En genstand over et medlems grad får ingen prik hos det medlem, men den kan ses på selve fotoet. Billedets grad skal derfor passe til, hvem der må se stedet.',
+      'Når montren er ændret: åbn billedet, tryk Redigér markeringer og derefter Skift billedet. Alle prikker bliver gule og er skjult for medlemmer, indtil du har trukket dem på plads eller bekræftet dem.',
+      'Flyttes en markeret genstand til en anden placering, bliver prikken rød ("flyttet") og skjules for medlemmer. Fjern markeringen, eller bekræft den, hvis genstanden stadig kan ses på billedet.',
+      'Titel, grad og noter rettes under Ret titel, grad og noter nederst på billedet (i redigering). Kun en administrator kan slette et oversigtsbillede.',
     ] },
   ] },
 

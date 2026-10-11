@@ -359,6 +359,111 @@ async function addUdlaan(api) {
   console.log('= udlån og kø');
 }
 
+/** Oversigtsbilleder: et foto af en placering med markeringer (prikker), der peger på genstande og arkivmateriale. */
+async function addOversigt(api) {
+  if (!(await exists(api, '/collections/oversigtsbilleder'))) {
+    await api('POST', '/collections', {
+      collection: 'oversigtsbilleder',
+      meta: {
+        icon: 'pin_drop', note: 'Fotos af placeringer med markerede genstande', display_template: '{{placering.sti}} {{titel}}', sort: 4,
+        translations: [{ language: LANG, translation: 'Oversigtsbilleder', singular: 'Oversigtsbillede', plural: 'Oversigtsbilleder' }],
+      },
+      schema: {},
+      fields: [
+        pk(),
+        text('titel', 'Titel', { width: 'full', sort: 3, note: 'Valgfri, fx "Forside" eller "Bagvæg"' }),
+        { ...minGrad(4), meta: { ...minGrad(4).meta, note: 'Laveste grad der må se billedet og dets markeringer (1 = alle medlemmer). Vælg efter, hvem der har adgang til at se stedet i virkeligheden.' } },
+        field('billede_skiftet', 'timestamp', { interface: 'datetime', hidden: true, readonly: true, label: 'Billede skiftet', sort: 6 }),
+        noter(7), oprettet(8), opdateret(9),
+      ],
+    });
+  }
+  await addM2O(api, {
+    collection: 'oversigtsbilleder', fieldName: 'placering', related: 'placeringer', type: 'integer',
+    meta: { ...placeringMeta(1), interface: 'placering-vaelger', required: true },
+    oneField: 'oversigtsbilleder', oneFieldMeta: contentList('{{titel}} (grad {{min_grad}})', 'Oversigtsbilleder', 9),
+    onDelete: 'NO ACTION',
+  });
+  await addM2O(api, {
+    collection: 'oversigtsbilleder', fieldName: 'billede', related: 'directus_files', type: 'uuid',
+    meta: {
+      special: ['file'], interface: 'file-image', width: 'full', sort: 2, display: 'image', required: true,
+      note: 'Skiftes billedet, skal markeringerne bekræftes igen i modulet Oversigtsbilleder', translations: label('Billede'),
+    },
+    oneField: 'i_oversigtsbilleder',
+    oneFieldMeta: {
+      special: ['o2m'], interface: 'list-o2m', hidden: true, readonly: true, width: 'full',
+      note: 'Bruges til at styre adgang: filen følger graden på oversigtsbilledet', translations: label('Bruges i oversigtsbilleder'),
+    },
+    onDelete: 'NO ACTION',
+  });
+
+  const markeringStatus = choices(['placeret', 'Placeret'], ['skal_placeres', 'Skal placeres igen'], ['flyttet', 'Flyttet']);
+  if (!(await exists(api, '/collections/markeringer'))) {
+    const procent = (name, labelText, sort) => field(name, 'float', {
+      interface: 'input', width: 'half', label: labelText, required: true, sort,
+      note: 'Procent af billedets ' + (name === 'x' ? 'bredde' : 'højde'),
+      validation: { _and: [{ [name]: { _gte: 0 } }, { [name]: { _lte: 100 } }] }, validation_message: 'Angiv et tal fra 0 til 100',
+    });
+    await api('POST', '/collections', {
+      collection: 'markeringer',
+      meta: {
+        icon: 'location_on', note: 'Prikker på oversigtsbilleder', hidden: true, sort: 5,
+        translations: [{ language: LANG, translation: 'Markeringer', singular: 'Markering', plural: 'Markeringer' }],
+      },
+      schema: {},
+      fields: [
+        pk(), procent('x', 'X', 4), procent('y', 'Y', 5),
+        dropdown('status', 'Status', markeringStatus, { default: 'placeret', required: true, sort: 6 }),
+      ],
+    });
+  }
+  await addM2O(api, {
+    collection: 'markeringer', fieldName: 'oversigtsbillede', related: 'oversigtsbilleder', type: 'integer',
+    meta: {
+      special: ['m2o'], interface: 'select-dropdown-m2o', width: 'full', sort: 1, required: true,
+      options: { template: '{{placering.sti}} {{titel}}' }, display: 'related-values', display_options: { template: '{{placering.sti}} {{titel}}' },
+      translations: label('Oversigtsbillede'),
+    },
+    oneField: 'markeringer', oneFieldMeta: contentList('{{genstand.inventarnummer}}{{arkivmateriale.arkivnummer}} ({{status}})', 'Markeringer', 5),
+    onDelete: 'CASCADE',
+  });
+  // Præcis én af de to skal være udfyldt; det håndhæves af udvidelsen oversigt-regler. Slettes posten, forsvinder
+  // dens markering. Det omvendte felt på posten viser linket "Vis på oversigtsbillede".
+  const poster = {
+    genstand: ['genstande', '{{inventarnummer}} – {{titel}}', 'Genstand', 2],
+    arkivmateriale: ['arkivmateriale', '{{arkivnummer}} – {{titel}}', 'Arkivmateriale', 3],
+  };
+  for (const [fieldName, [related, template, labelText, sort]] of Object.entries(poster)) {
+    await addM2O(api, {
+      collection: 'markeringer', fieldName, related, type: 'integer',
+      meta: {
+        special: ['m2o'], interface: 'select-dropdown-m2o', width: 'half', sort,
+        options: { template }, display: 'related-values', display_options: { template }, translations: label(labelText),
+      },
+      oneField: 'paa_oversigtsbilleder',
+      oneFieldMeta: {
+        special: ['o2m'], interface: 'oversigt-link', readonly: true, width: 'full',
+        display: 'related-values', display_options: { template: '{{oversigtsbillede.titel}}' }, translations: label('Oversigtsbilleder'),
+      },
+      onDelete: 'CASCADE',
+    });
+    // Linket står lige efter placeringen på posten.
+    const felter = (await api('GET', `/fields/${related}`)).sort((a, b) => (a.meta?.sort ?? 999) - (b.meta?.sort ?? 999)).map((f) => f.field);
+    const orden = felter.filter((f) => f !== 'paa_oversigtsbilleder');
+    orden.splice(orden.indexOf('placering') + 1, 0, 'paa_oversigtsbilleder');
+    for (const [n, f] of orden.entries()) await api('PATCH', `/fields/${related}/${f}`, { meta: { sort: n + 1 } });
+  }
+  // Modulet skal kunne skjules pr. rolle (udvidelsen menu).
+  const skjul = await api('GET', '/fields/directus_roles/skjul_i_menu').catch(() => null);
+  const valg = skjul?.meta?.options?.choices;
+  if (valg && !valg.some((v) => v.value === 'oversigt')) {
+    valg.splice(valg.findIndex((v) => v.value === 'foto') + 1, 0, { text: 'Oversigtsbilleder', value: 'oversigt' });
+    await api('PATCH', '/fields/directus_roles/skjul_i_menu', { meta: { options: { ...skjul.meta.options, choices: valg } } });
+  }
+  console.log('= oversigtsbilleder og markeringer');
+}
+
 async function main() {
   await waitForServer();
   const api = await adminClient();
@@ -444,6 +549,7 @@ async function main() {
   });
 
   await addUdlaan(api);
+  await addOversigt(api);
 
   console.log('Datamodel færdig.');
 }
