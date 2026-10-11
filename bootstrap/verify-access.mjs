@@ -242,5 +242,59 @@ try {
   } finally { await admin('DELETE', `/files/${fid}`).catch(() => {}); }
 }
 
+// ---- 6. Udlån og kø: lånerens navn og køens navne er kun for arkivar og administrator ----------------------------
+{
+  const arkivar = client(tokens.arkivar);
+  const koeFelt = { genstande: 'genstand', arkivmateriale: 'arkivmateriale', bibliotek: 'bog' };
+  const egne = [];
+  try {
+    for (const c of Object.keys(koeFelt)) {
+      const p = posts.find((x) => x.c === c && x.min_grad === 1);
+      const nu = (await admin('GET', `/items/${c}/${p.id}?fields=status`)).status;
+      const foer = nu === 'udlaant' ? (c === 'bibliotek' ? 'paa_hylden' : 'i_arkiv') : nu;
+      await arkivar('PATCH', `/items/${c}/${p.id}`, { status: 'udlaant', udlaant_til: 'Br. Testlåner', udlaant_dato: '2026-01-02', retur_dato: '2026-02-03' });
+      const m = await http('GET', `/items/${c}/${p.id}`, { token: tokens.medlem1 });
+      const navn = await http('GET', `/items/${c}/${p.id}?fields=udlaant_til`, { token: tokens.medlem1 });
+      const soeg = await http('GET', `/items/${c}?fields=id&search=Testl%C3%A5ner`, { token: tokens.medlem1 });
+      check(`${c}: medlem ser status og datoer, men ikke lånerens navn`,
+        m.json.data.status === 'udlaant' && m.json.data.udlaant_dato === '2026-01-02' && m.json.data.retur_dato === '2026-02-03'
+        && !('udlaant_til' in m.json.data) && navn.status === 403 && soeg.json.data.length === 0, `felt ${navn.status}, søgning ${soeg.json?.data?.length}`);
+      const retur = await arkivar('PATCH', `/items/${c}/${p.id}`, { status: foer });
+      check(`${c}: udlånsoplysningerne ryddes, når status sættes tilbage`,
+        retur.udlaant_til === null && retur.udlaant_dato === null && retur.retur_dato === null, JSON.stringify([retur.udlaant_til, retur.udlaant_dato, retur.retur_dato]));
+    }
+
+    const bog = posts.find((x) => x.c === 'bibliotek' && x.min_grad === 1);
+    const bog5 = posts.find((x) => x.c === 'bibliotek' && x.min_grad === 5);
+    const plads = {};
+    for (const user of ['medlem1', 'medlem5']) {
+      plads[user] = (await client(tokens[user])('POST', '/items/reservationer', { bog: bog.id })).id;
+      egne.push(plads[user]);
+    }
+    const p5 = (await client(tokens.medlem5)('POST', '/items/reservationer', { bog: bog5.id })).id;
+    egne.push(p5);
+    const iKoe = (r) => r.json.data.filter((x) => egne.includes(x.id));
+    const q = `?limit=-1&fields=id,bruger,oprettet&filter[bog][_eq]=${bog.id}`;
+    const set1 = iKoe(await http('GET', `/items/reservationer${q}`, { token: tokens.medlem1 }));
+    check('medlem1 kan tælle køen (2), men ser kun sig selv som bruger',
+      set1.length === 2 && set1.filter((x) => x.bruger).length === 1 && set1.find((x) => x.bruger)?.id === plads.medlem1, JSON.stringify(set1));
+    const navne = await http('GET', `/items/reservationer?limit=-1&fields=id,bruger.first_name,bruger.last_name&filter[bog][_eq]=${bog.id}`, { token: tokens.arkivar });
+    check('arkivar ser navnene på alle i køen', iKoe(navne).length === 2 && iKoe(navne).every((x) => x.bruger?.first_name), JSON.stringify(navne.json?.data));
+    const hoej = await http('GET', `/items/reservationer?limit=-1&fields=id&filter[bog][_eq]=${bog5.id}`, { token: tokens.medlem1 });
+    check('medlem1 ser ikke køen til en bog over egen grad', iKoe(hoej).length === 0, JSON.stringify(hoej.json?.data));
+    const falsk = await http('POST', '/items/reservationer', { token: tokens.medlem1, body: { bog: bog.id, bruger: '00000000-0000-0000-0000-000000000000' } });
+    check('medlem kan ikke stille en anden bruger i kø', falsk.status === 403, `status ${falsk.status}`);
+    const andens = await http('DELETE', `/items/reservationer/${plads.medlem5}`, { token: tokens.medlem1 });
+    const egen = await http('DELETE', `/items/reservationer/${plads.medlem1}`, { token: tokens.medlem1 });
+    check('medlem kan forlade køen, men ikke fjerne en andens plads', andens.status === 403 && egen.status === 204, `${andens.status}/${egen.status}`);
+    const fjern = await http('DELETE', `/items/reservationer/${plads.medlem5}`, { token: tokens.arkivar });
+    check('arkivar kan fjerne en plads i køen', fjern.status === 204, `status ${fjern.status}`);
+    const tjeneste = process.env.TEKSTSERVICE_TOKEN && await http('GET', '/items/reservationer', { token: process.env.TEKSTSERVICE_TOKEN });
+    if (tjeneste) check('tekstservicen har ingen adgang til køen', tjeneste.status === 403, `status ${tjeneste.status}`);
+  } finally {
+    for (const id of egne) await admin('DELETE', `/items/reservationer/${id}`).catch(() => {});
+  }
+}
+
 console.log(failures ? `\n${failures} TEST(S) FEJLEDE` : '\nAlle tests bestået.');
 process.exit(failures ? 1 : 0);

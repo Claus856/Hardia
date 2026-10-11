@@ -2,6 +2,31 @@
 
 Formatet følger [Keep a Changelog](https://keepachangelog.com/da/1.1.0/), og versionerne følger [SemVer](https://semver.org/lang/da/).
 
+## [1.4.0] - 2026-10-11
+
+### Tilføjet
+- Udlånsoplysninger på genstande, arkivmateriale og bøger: "Udlånt til", "Udlånt den" og "Forventet retur". Felterne vises, når status er Udlånt, og de to første er da påkrævede.
+- Status (I arkiv / Udlånt) på arkivmateriale; eksisterende dokumenter får "I arkiv".
+- Flowet "Ryd udlån ved retur": de tre felter tømmes, når status sættes tilbage.
+- Kø: feltet "Kø" på posten med knappen "Stil mig i kø" / "Forlad køen" (udvidelsen `udlaan-koe`, collectionen `reservationer`). Medlemmer ser antallet i køen; Arkivar og Administrator ser navnene i rækkefølge og kan fjerne en plads.
+- Bogmærket "Udlånt" under hver samling for Arkivar og Administrator, med låner og datoer.
+- `bootstrap/udlaan.mjs` (flow og bogmærker), som `provision.sh` nu også kører.
+- Vejledningen: afsnittet "Udlån og kø".
+
+### Ændret
+- Medlemmer kan ikke se lånerens navn (`udlaant_til`): deres læseadgang til de tre samlinger er nu en feltliste uden det felt i stedet for alle felter. Kør `provision.sh` igen efter nye felter i datamodellen.
+- Medlemmer kan oprette og slette deres egen plads i køen; ellers er de stadig kun læsere.
+- Arkivar kan læse navnene (ikke e-mail eller grad) på alle brugere, for at kunne se hvem der står i kø.
+
+### Testet
+- På en separat testinstans: 13 nye tjek i `verify.sh` (54 i alt består): medlem ser status og datoer, men ikke lånerens navn (heller ikke via filter eller søgning); felterne ryddes ved retur på alle tre samlinger; medlem kan tælle køen, men ser kun sig selv; ser ikke køen til poster over egen grad; kan ikke stille andre i kø eller fjerne andres plads; arkivar ser navnene og kan fjerne en plads; tekstservicen har ingen adgang til køen.
+- I browseren: felterne dukker op ved Udlånt på alle tre samlinger og kan ikke gemmes uden låner og dato; køen som medlem og som arkivar; bogmærket "Udlånt"; medlemmets lister og siden Søg uden fejl.
+
+### Kendt
+- Kravet om låner og dato håndhæves i formularen, ikke i API'et.
+- Ingen besked til den næste i køen ved retur, og ingen udlånshistorik.
+- Ikke afprøvet på en rigtig telefon.
+
 ## [1.3.0] - 2026-10-10
 
 ### Tilføjet

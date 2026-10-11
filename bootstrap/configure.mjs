@@ -94,6 +94,13 @@ for (const [rolle, skjul] of [[arkivar, ['users', 'docs']], [medlem, ['users', '
 }
 await ensureAccess(arkivar.id, arkivarPolicy.id);
 await ensureAccess(medlem.id, medlemPolicy.id);
+// To læseregler på samme collection kræver to policies; Directus lægger dem sammen felt for felt.
+const egenPladsPolicy = await upsertByName('policies', 'Medlem: egen plads i køen', {
+  icon: 'group', description: 'Medlemmet kan se sin egen plads i køen til en post', app_access: false, admin_access: false,
+});
+await ensureAccess(medlem.id, egenPladsPolicy.id);
+const KOE_FELTER = ['genstand', 'arkivmateriale', 'bog'];
+const EGEN_PLADS = { bruger: { _eq: '$CURRENT_USER' } };
 
 // Alle må skifte deres eget kodeord - og kun det: grad, rolle og e-mail kan kun en administrator ændre.
 const EGET_KODEORD = { collection: 'directus_users', action: 'update', fields: ['password'], permissions: { id: { _eq: '$CURRENT_USER' } } };
@@ -108,13 +115,32 @@ const arkivarRows = [
   ...['create', 'read', 'update'].map((action) => ({ collection: 'directus_files', action })),
   { collection: 'directus_folders', action: 'read' },
   EGET_KODEORD,
+  // Køen: arkivaren ser hvem der står i kø (derfor navnene på brugerne), kan fjerne en plads og selv stille sig i kø.
+  { collection: 'reservationer', action: 'create', fields: KOE_FELTER },
+  { collection: 'reservationer', action: 'read' },
+  { collection: 'reservationer', action: 'delete' },
+  { collection: 'directus_users', action: 'read', fields: ['id', 'first_name', 'last_name'] },
 ];
 await setPermissions(arkivarPolicy.id, arkivarRows);
 console.log(`= Arkivar: ${arkivarRows.length} rettigheder`);
 
 // --- Medlem: kun læse ------------------------------------------------------------------------------------------
+// Lånerens navn (udlaant_til) er kun for arkivar og administrator. Directus har ingen "alle felter undtagen", så
+// medlemmets feltliste dannes ud fra de felter, der findes nu: kør configure.mjs igen, når der oprettes nye felter.
+const felterUden = async (collection, skjult) =>
+  (await api('GET', `/fields/${collection}`)).map((f) => f.field).filter((f) => !skjult.includes(f));
 const medlemRows = [
-  ...MAIN.map((collection) => ({ collection, action: 'read', permissions: GRAD_OK })),
+  ...await Promise.all(MAIN.map(async (collection) => ({
+    collection, action: 'read', permissions: GRAD_OK, fields: await felterUden(collection, ['udlaant_til']),
+  }))),
+  // Køen: et medlem kan stille sig i kø og forlade den igen, og kan tælle rækkerne på de poster, det må se -
+  // men ikke se hvem de tilhører. Egne rækker læses via policyen "Medlem: egen plads i køen" nedenfor.
+  { collection: 'reservationer', action: 'create', fields: KOE_FELTER },
+  { collection: 'reservationer', action: 'delete', permissions: EGEN_PLADS },
+  {
+    collection: 'reservationer', action: 'read', fields: ['id', ...KOE_FELTER],
+    permissions: { _or: KOE_FELTER.map((felt) => ({ [felt]: GRAD_OK })) },
+  },
   { collection: 'placeringer', action: 'read' },
   EGET_KODEORD,
   { collection: 'directus_folders', action: 'read' }, // ellers fejler fil-modulet med en "Forbudt"-dialog
@@ -135,5 +161,6 @@ const medlemRows = [
   },
 ];
 await setPermissions(medlemPolicy.id, medlemRows);
+await setPermissions(egenPladsPolicy.id, [{ collection: 'reservationer', action: 'read', permissions: EGEN_PLADS }]);
 console.log(`= Medlem: ${medlemRows.length} rettigheder`);
 console.log('Roller og rettigheder færdige.');

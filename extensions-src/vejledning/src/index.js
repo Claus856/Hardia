@@ -15,7 +15,7 @@ const AFSNIT = [
       'Nederst i bjælken finder du din egen profil, hvor du kan skifte kodeord og logge ud.',
       'Vejledningen her viser kun de funktioner, du selv har adgang til.',
     ] },
-    { max: 0, v: 'Som medlem kan du se og søge i arkivet, men ikke rette i det. Du ser de poster og billeder, som din grad giver adgang til; poster til højere grader vises slet ikke.' },
+    { max: 0, v: 'Som medlem kan du se og søge i arkivet og stille dig i kø til en post, men ikke rette i det. Du ser de poster og billeder, som din grad giver adgang til; poster til højere grader vises slet ikke.' },
     { n: 1, max: 1, v: 'Som arkivar ser du alle poster uanset grad, og du kan oprette og rette poster, placeringer og billeder. Du kan ikke slette; det kan kun en administrator.' },
     { n: 2, v: 'Som administrator kan du alt: oprette brugere, sætte deres grad, slette poster og ændre opsætningen.' },
   ] },
@@ -40,7 +40,7 @@ const AFSNIT = [
     'Under Indhold (kassen øverst i menuen) ligger samlingerne som lister:',
     { l: [
       'Genstande: museumsgenstande med inventarnummer, titel, status, land, kategori, datering, materiale, mål, stand, proveniens og billeder.',
-      'Arkivmateriale: dokumenter med arkivnummer, dokumenttype, titel, dato, beskrivelse og scanninger.',
+      'Arkivmateriale: dokumenter med arkivnummer, dokumenttype, titel, dato, status, beskrivelse og scanninger.',
       'Bibliotek: bøger med titel, forfatter, udgivelsesår, udgiver, ISBN, sprog, antal eksemplarer, status og omslagsbillede.',
       'Placeringer: rum, montrer, skabe, hylder osv. Listen står i samme orden som placeringerne i virkeligheden, med den fulde kode forrest.',
     ] },
@@ -69,7 +69,7 @@ const AFSNIT = [
       'Gå til Indhold, vælg Genstande, og tryk på + øverst til højre.',
       'Placering: vælg trin for trin, hvor genstanden står (rum, montre, hylde). Placeringen skal vælges; nummeret dannes ud fra den.',
       'Titel: en kort, sigende betegnelse.',
-      'Status: I arkiv, Udstillet eller Udlånt.',
+      'Status: I arkiv, Udstillet eller Udlånt. Ved Udlånt skal du angive låner og dato; se afsnittet Udlån og kø.',
       'Min. grad: den laveste grad, der må se genstanden.',
       'Beskrivelse og Land. Danmark er forvalgt; åbn listen og skriv de første bogstaver for at finde et andet land.',
       'Udfyld de øvrige felter efter behov: kategori, datering, materiale, mål, stand, proveniens og noter.',
@@ -84,6 +84,30 @@ const AFSNIT = [
       'Arkivmateriale får arkivnummer automatisk ud fra placeringen, ligesom genstande. Scanninger lægges i feltet med filer.',
       'Bøger har ikke noget automatisk nummer. Angiv titel, forfatter og antal eksemplarer, og læg gerne et omslagsbillede på.',
       'Husk Min. grad på hver post.',
+    ] },
+  ] },
+
+  { t: 'Udlån og kø', b: [
+    { max: 0, v: 'Status på en post viser, om den er udlånt. Er den det, kan du se, hvornår den blev lånt ud, og hvornår den ventes tilbage, hvis der er aftalt en dato. Du kan ikke se, hvem der har lånt den.' },
+    'Vil du gerne låne en bog, et dokument eller en genstand, kan du stille dig i kø:',
+    { trin: [
+      'Åbn posten under Indhold.',
+      'Tryk Stil mig i kø i feltet Kø. Det gemmes med det samme.',
+      'Vil du ikke have den alligevel, så åbn posten igen og tryk Forlad køen.',
+    ] },
+    { max: 0, v: 'Feltet viser, hvor mange der står i kø. Kun arkivaren kan se, hvem det er, og kontakter dig, når det er din tur.' },
+    { n: 1, v: 'Når noget lånes ud:' },
+    { n: 1, trin: [
+      'Åbn posten, og sæt Status til Udlånt.',
+      'Udfyld Udlånt til (lånerens navn) og Udlånt den. Begge skal udfyldes, før posten kan gemmes.',
+      'Udfyld Forventet retur, hvis I har aftalt en dato.',
+      'Gem med fluebenet.',
+    ] },
+    { n: 1, l: [
+      'Når tingen kommer tilbage, sætter du Status tilbage (På hylden eller I arkiv) og gemmer. De tre udlånsfelter tømmes af sig selv.',
+      'Lånerens navn kan kun ses af arkivarer og administratorer. Medlemmer ser status og datoerne.',
+      'Bogmærket Udlånt under hver samling i menuen viser alt, der er lånt ud lige nu, med låner og datoer.',
+      'Feltet Kø viser, hvem der står i kø, i den rækkefølge de har meldt sig. Medlemmer ser kun antallet. Der sendes ingen besked ved retur: se i køen, hvem der er den næste, og tryk Fjern ud for vedkommende, når tingen er givet videre.',
     ] },
   ] },
 

@@ -31,6 +31,7 @@ function field(name, type, o = {}) {
       translations: o.label ? label(o.label) : undefined,
       validation: o.validation,
       validation_message: o.validation_message,
+      conditions: o.conditions,
     },
     schema: {
       is_nullable: !required,
@@ -297,6 +298,67 @@ const contentList = (template, labelText, sort) => ({
   translations: label(labelText),
 });
 
+/** Udlån: hvem, hvornår og forventet retur. Felterne vises kun, når status er Udlånt, og er da påkrævede. */
+const IKKE_UDLAANT = { name: 'Skjul når ikke udlånt', rule: { _and: [{ status: { _neq: 'udlaant' } }] }, hidden: true, options: {} };
+const UDLAANT = (required) => ({ name: 'Udlånt', rule: { _and: [{ status: { _eq: 'udlaant' } }] }, hidden: false, required, options: {} });
+const udlaansfelter = () => [
+  text('udlaant_til', 'Udlånt til', { width: 'full', note: 'Navnet på låneren. Ses kun af arkivar og administrator.', conditions: [IKKE_UDLAANT, UDLAANT(true)] }),
+  field('udlaant_dato', 'date', { interface: 'datetime', width: 'half', label: 'Udlånt den', conditions: [IKKE_UDLAANT, UDLAANT(true)] }),
+  field('retur_dato', 'date', { interface: 'datetime', width: 'half', label: 'Forventet retur', note: 'Udfyldes, hvis der er aftalt en dato', conditions: [IKKE_UDLAANT, UDLAANT(false)] }),
+];
+const KOE = { genstande: 'genstand', arkivmateriale: 'arkivmateriale', bibliotek: 'bog' };
+
+async function addUdlaan(api) {
+  if (!(await exists(api, '/fields/arkivmateriale/status'))) {
+    await api('POST', '/fields/arkivmateriale', dropdown('status', 'Status', choices(['i_arkiv', 'I arkiv'], ['udlaant', 'Udlånt']),
+      { default: 'i_arkiv', required: true }));
+  }
+  // Køen: én række pr. bruger pr. post. Hvem der står i kø, ses kun af arkivar og administrator (se configure.mjs).
+  if (!(await exists(api, '/collections/reservationer'))) {
+    await api('POST', '/collections', {
+      collection: 'reservationer',
+      meta: { hidden: true, icon: 'group', note: 'Kø til udlån', translations: [{ language: LANG, translation: 'Kø', singular: 'Plads i køen', plural: 'Kø' }] },
+      schema: {},
+      fields: [pk(), oprettet(6)],
+    });
+  }
+  await addM2O(api, {
+    collection: 'reservationer', fieldName: 'bruger', related: 'directus_users', type: 'uuid',
+    meta: {
+      special: ['user-created'], interface: 'select-dropdown-m2o', readonly: true, width: 'half', sort: 2,
+      options: { template: '{{first_name}} {{last_name}}' }, display: 'user', translations: label('Bruger'),
+    },
+    onDelete: 'CASCADE',
+  });
+  for (const [i, [collection, fieldName]] of Object.entries(KOE).entries()) {
+    await addM2O(api, {
+      collection: 'reservationer', fieldName, related: collection, type: 'integer',
+      meta: { special: ['m2o'], interface: 'select-dropdown-m2o', width: 'half', sort: 3 + i },
+      onDelete: 'CASCADE',
+    });
+    for (const f of udlaansfelter()) {
+      if (!(await exists(api, `/fields/${collection}/${f.field}`))) await api('POST', `/fields/${collection}`, f);
+    }
+    if (!(await exists(api, `/fields/${collection}/koe`))) {
+      await api('POST', `/fields/${collection}`, {
+        field: 'koe', type: 'alias', schema: null,
+        meta: { special: ['alias', 'no-data'], interface: 'udlaan-koe', width: 'full', translations: label('Kø') },
+      });
+    }
+    // Rækkefølge i formularen: udlånsfelterne og køen lige efter status (på arkivmateriale: status efter dato).
+    const felter = (await api('GET', `/fields/${collection}`)).sort((a, b) => (a.meta?.sort ?? 999) - (b.meta?.sort ?? 999)).map((f) => f.field);
+    const flyt = ['udlaant_til', 'udlaant_dato', 'retur_dato', 'koe'];
+    let orden = felter.filter((f) => !flyt.includes(f));
+    if (collection === 'arkivmateriale') {
+      orden = orden.filter((f) => f !== 'status');
+      orden.splice(orden.indexOf('dato') + 1, 0, 'status');
+    }
+    orden.splice(orden.indexOf('status') + 1, 0, ...flyt);
+    for (const [n, f] of orden.entries()) await api('PATCH', `/fields/${collection}/${f}`, { meta: { sort: n + 1 } });
+  }
+  console.log('= udlån og kø');
+}
+
 async function main() {
   await waitForServer();
   const api = await adminClient();
@@ -380,6 +442,8 @@ async function main() {
       translations: label('Bruges i bibliotek'),
     },
   });
+
+  await addUdlaan(api);
 
   console.log('Datamodel færdig.');
 }

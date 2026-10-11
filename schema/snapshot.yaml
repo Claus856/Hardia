@@ -164,6 +164,34 @@ collections:
       versioning: false
     schema:
       name: placeringer
+  - collection: reservationer
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: reservationer
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: group
+      item_duplication_fields: null
+      note: Kø til udlån
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations:
+        - language: da-DK
+          plural: Kø
+          singular: Plads i køen
+          translation: Kø
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: reservationer
 fields:
   - collection: arkivmateriale
     field: id
@@ -224,7 +252,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 3
+      sort: 5
       special: null
       translations:
         - language: da-DK
@@ -310,7 +338,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 4
+      sort: 6
       special: null
       translations:
         - language: da-DK
@@ -352,7 +380,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 5
+      sort: 7
       special: null
       translations:
         - language: da-DK
@@ -394,7 +422,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 8
       special: null
       translations:
         - language: da-DK
@@ -436,7 +464,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 7
+      sort: 14
       special: null
       translations:
         - language: da-DK
@@ -484,7 +512,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 9
+      sort: 16
       special: null
       translations:
         - language: da-DK
@@ -531,7 +559,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 17
       special: null
       translations:
         - language: da-DK
@@ -574,7 +602,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 15
+      sort: 22
       special:
         - date-created
       translations:
@@ -618,7 +646,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 16
+      sort: 23
       special:
         - date-updated
       translations:
@@ -662,7 +690,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 8
+      sort: 15
       special:
         - m2o
       translations:
@@ -711,7 +739,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 1
+      sort: 3
       special:
         - files
       translations:
@@ -741,7 +769,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 11
+      sort: 18
       special:
         - cast-csv
       translations:
@@ -787,7 +815,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 12
+      sort: 19
       special:
         - cast-csv
       translations:
@@ -859,7 +887,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 13
+      sort: 20
       special: null
       translations:
         - language: da-DK
@@ -902,7 +930,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 14
+      sort: 21
       special: null
       translations:
         - language: da-DK
@@ -946,7 +974,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 17
+      sort: 24
       special:
         - alias
         - no-data
@@ -954,36 +982,6 @@ fields:
       translations:
         - language: da-DK
           translation: Udtrukket tekst
-      validation: null
-      validation_message: null
-      width: full
-  - collection: arkivmateriale
-    field: soegbar_tekst
-    type: alias
-    meta:
-      collection: arkivmateriale
-      conditions: null
-      display: null
-      display_options: null
-      field: soegbar_tekst
-      group: null
-      hidden: false
-      interface: soegbar-tekst
-      note: >-
-        Sæt hak ved de PDF'er og billeder, der skal kunne søges i. Scanninger og
-        billeder læses med OCR. Uden hak læses filen ikke, og der gemmes ingen
-        tekst fra den. Hakket gemmes med det samme.
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: 2
-      special:
-        - alias
-        - no-data
-      translations:
-        - language: da-DK
-          translation: Søgbar tekst
       validation: null
       validation_message: null
       width: full
@@ -1004,7 +1002,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 1
+      sort: 2
       special: null
       translations:
         - language: da-DK
@@ -1029,6 +1027,288 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: arkivmateriale
+    field: soegbar_tekst
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: soegbar_tekst
+      group: null
+      hidden: false
+      interface: soegbar-tekst
+      note: >-
+        Sæt hak ved de PDF'er og billeder, der skal kunne søges i. Scanninger og
+        billeder læses med OCR. Uden hak læses filen ikke, og der gemmes ingen
+        tekst fra den. Hakket gemmes med det samme.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Søgbar tekst
+      validation: null
+      validation_message: null
+      width: full
+  - collection: arkivmateriale
+    field: status
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: I arkiv
+            value: i_arkiv
+          - text: Udlånt
+            value: udlaant
+        showAsDot: false
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: false
+        choices:
+          - text: I arkiv
+            value: i_arkiv
+          - text: Udlånt
+            value: udlaant
+      readonly: false
+      required: true
+      searchable: true
+      sort: 9
+      special: null
+      translations:
+        - language: da-DK
+          translation: Status
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: status
+      table: arkivmateriale
+      data_type: character varying
+      default_value: i_arkiv
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: udlaant_til
+    type: string
+    meta:
+      collection: arkivmateriale
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_til
+      group: null
+      hidden: false
+      interface: input
+      note: Navnet på låneren. Ses kun af arkivar og administrator.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 10
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt til
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: udlaant_til
+      table: arkivmateriale
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: udlaant_dato
+    type: date
+    meta:
+      collection: arkivmateriale
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 11
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt den
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: udlaant_dato
+      table: arkivmateriale
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: retur_dato
+    type: date
+    meta:
+      collection: arkivmateriale
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: false
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: retur_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: Udfyldes, hvis der er aftalt en dato
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 12
+      special: null
+      translations:
+        - language: da-DK
+          translation: Forventet retur
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: retur_dato
+      table: arkivmateriale
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: arkivmateriale
+    field: koe
+    type: alias
+    meta:
+      collection: arkivmateriale
+      conditions: null
+      display: null
+      display_options: null
+      field: koe
+      group: null
+      hidden: false
+      interface: udlaan-koe
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 13
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Kø
+      validation: null
+      validation_message: null
+      width: full
   - collection: arkivmateriale_files
     field: id
     type: integer
@@ -1456,7 +1736,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 2
+      sort: 3
       special: null
       translations:
         - language: da-DK
@@ -1498,7 +1778,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 3
+      sort: 4
       special: null
       translations:
         - language: da-DK
@@ -1540,7 +1820,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 4
+      sort: 5
       special: null
       translations:
         - language: da-DK
@@ -1587,7 +1867,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 5
+      sort: 6
       special: null
       translations:
         - language: da-DK
@@ -1629,7 +1909,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 7
       special: null
       translations:
         - language: da-DK
@@ -1703,7 +1983,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 7
+      sort: 8
       special: null
       translations:
         - language: da-DK
@@ -1745,7 +2025,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 8
+      sort: 9
       special: null
       translations:
         - language: da-DK
@@ -1801,7 +2081,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 9
+      sort: 10
       special: null
       translations:
         - language: da-DK
@@ -1849,7 +2129,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 11
+      sort: 16
       special: null
       translations:
         - language: da-DK
@@ -1896,7 +2176,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 12
+      sort: 17
       special: null
       translations:
         - language: da-DK
@@ -1939,7 +2219,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 13
+      sort: 18
       special:
         - date-created
       translations:
@@ -1983,7 +2263,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 14
+      sort: 19
       special:
         - date-updated
       translations:
@@ -2027,7 +2307,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 15
       special:
         - m2o
       translations:
@@ -2070,7 +2350,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 1
+      sort: 2
       special:
         - file
       translations:
@@ -2096,6 +2376,204 @@ fields:
       has_auto_increment: false
       foreign_key_table: directus_files
       foreign_key_column: id
+  - collection: bibliotek
+    field: udlaant_til
+    type: string
+    meta:
+      collection: bibliotek
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_til
+      group: null
+      hidden: false
+      interface: input
+      note: Navnet på låneren. Ses kun af arkivar og administrator.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 11
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt til
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: udlaant_til
+      table: bibliotek
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: udlaant_dato
+    type: date
+    meta:
+      collection: bibliotek
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 12
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt den
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: udlaant_dato
+      table: bibliotek
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: retur_dato
+    type: date
+    meta:
+      collection: bibliotek
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: false
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: retur_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: Udfyldes, hvis der er aftalt en dato
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 13
+      special: null
+      translations:
+        - language: da-DK
+          translation: Forventet retur
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: retur_dato
+      table: bibliotek
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: bibliotek
+    field: koe
+    type: alias
+    meta:
+      collection: bibliotek
+      conditions: null
+      display: null
+      display_options: null
+      field: koe
+      group: null
+      hidden: false
+      interface: udlaan-koe
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 14
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Kø
+      validation: null
+      validation_message: null
+      width: full
   - collection: directus_files
     field: i_genstande
     type: alias
@@ -2354,7 +2832,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 14
+      sort: 19
       special: null
       translations:
         - language: da-DK
@@ -2412,7 +2890,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 3
+      sort: 4
       special: null
       translations:
         - language: da-DK
@@ -2454,7 +2932,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 2
+      sort: 3
       special: null
       translations:
         - language: da-DK
@@ -2496,7 +2974,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 5
+      sort: 10
       special: null
       translations:
         - language: da-DK
@@ -2562,7 +3040,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 7
+      sort: 12
       special: null
       translations:
         - language: da-DK
@@ -2604,7 +3082,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 8
+      sort: 13
       special: null
       translations:
         - language: da-DK
@@ -2646,7 +3124,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 9
+      sort: 14
       special: null
       translations:
         - language: da-DK
@@ -2688,7 +3166,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 10
+      sort: 15
       special: null
       translations:
         - language: da-DK
@@ -2754,7 +3232,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 11
+      sort: 16
       special: null
       translations:
         - language: da-DK
@@ -2796,7 +3274,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 12
+      sort: 17
       special: null
       translations:
         - language: da-DK
@@ -2844,7 +3322,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 4
+      sort: 9
       special: null
       translations:
         - language: da-DK
@@ -2891,7 +3369,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 15
+      sort: 20
       special: null
       translations:
         - language: da-DK
@@ -2934,7 +3412,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 16
+      sort: 21
       special:
         - date-created
       translations:
@@ -2978,7 +3456,7 @@ fields:
       readonly: true
       required: false
       searchable: true
-      sort: 17
+      sort: 22
       special:
         - date-updated
       translations:
@@ -3022,7 +3500,7 @@ fields:
       readonly: false
       required: true
       searchable: true
-      sort: 1
+      sort: 2
       special:
         - m2o
       translations:
@@ -3071,7 +3549,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 13
+      sort: 18
       special:
         - files
       translations:
@@ -4099,7 +4577,7 @@ fields:
       readonly: false
       required: false
       searchable: true
-      sort: 6
+      sort: 11
       special: null
       translations:
         - language: da-DK
@@ -4124,6 +4602,204 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: genstande
+    field: udlaant_til
+    type: string
+    meta:
+      collection: genstande
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_til
+      group: null
+      hidden: false
+      interface: input
+      note: Navnet på låneren. Ses kun af arkivar og administrator.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt til
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: udlaant_til
+      table: genstande
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: udlaant_dato
+    type: date
+    meta:
+      collection: genstande
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: true
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: udlaant_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations:
+        - language: da-DK
+          translation: Udlånt den
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: udlaant_dato
+      table: genstande
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: retur_dato
+    type: date
+    meta:
+      collection: genstande
+      conditions:
+        - hidden: true
+          name: Skjul når ikke udlånt
+          options: {}
+          rule:
+            _and:
+              - status:
+                  _neq: udlaant
+        - hidden: false
+          name: Udlånt
+          options: {}
+          required: false
+          rule:
+            _and:
+              - status:
+                  _eq: udlaant
+      display: null
+      display_options: null
+      field: retur_dato
+      group: null
+      hidden: false
+      interface: datetime
+      note: Udfyldes, hvis der er aftalt en dato
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special: null
+      translations:
+        - language: da-DK
+          translation: Forventet retur
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: retur_dato
+      table: genstande
+      data_type: date
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: genstande
+    field: koe
+    type: alias
+    meta:
+      collection: genstande
+      conditions: null
+      display: null
+      display_options: null
+      field: koe
+      group: null
+      hidden: false
+      interface: udlaan-koe
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 8
+      special:
+        - alias
+        - no-data
+      translations:
+        - language: da-DK
+          translation: Kø
+      validation: null
+      validation_message: null
+      width: full
   - collection: genstande_files
     field: id
     type: integer
@@ -4780,6 +5456,257 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: reservationer
+    field: id
+    type: integer
+    meta:
+      collection: reservationer
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: reservationer
+      data_type: integer
+      default_value: nextval('reservationer_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: reservationer
+    field: oprettet
+    type: timestamp
+    meta:
+      collection: reservationer
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: oprettet
+      group: null
+      hidden: false
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 6
+      special:
+        - date-created
+      translations:
+        - language: da-DK
+          translation: Oprettet
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: oprettet
+      table: reservationer
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: reservationer
+    field: bruger
+    type: uuid
+    meta:
+      collection: reservationer
+      conditions: null
+      display: user
+      display_options: null
+      field: bruger
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - user-created
+      translations:
+        - language: da-DK
+          translation: Bruger
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: bruger
+      table: reservationer
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: reservationer
+    field: genstand
+    type: integer
+    meta:
+      collection: reservationer
+      conditions: null
+      display: null
+      display_options: null
+      field: genstand
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: genstand
+      table: reservationer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: genstande
+      foreign_key_column: id
+  - collection: reservationer
+    field: arkivmateriale
+    type: integer
+    meta:
+      collection: reservationer
+      conditions: null
+      display: null
+      display_options: null
+      field: arkivmateriale
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special:
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: arkivmateriale
+      table: reservationer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+  - collection: reservationer
+    field: bog
+    type: integer
+    meta:
+      collection: reservationer
+      conditions: null
+      display: null
+      display_options: null
+      field: bog
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: bog
+      table: reservationer
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: bibliotek
+      foreign_key_column: id
 systemFields:
   - collection: directus_activity
     field: timestamp
@@ -4983,3 +5910,87 @@ relations:
       constraint_name: placeringer_overordnet_foreign
       on_update: NO ACTION
       on_delete: SET NULL
+  - collection: reservationer
+    field: bruger
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: reservationer
+      many_field: bruger
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: reservationer
+      column: bruger
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: reservationer_bruger_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: reservationer
+    field: genstand
+    related_collection: genstande
+    meta:
+      junction_field: null
+      many_collection: reservationer
+      many_field: genstand
+      one_allowed_collections: null
+      one_collection: genstande
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: reservationer
+      column: genstand
+      foreign_key_table: genstande
+      foreign_key_column: id
+      constraint_name: reservationer_genstand_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: reservationer
+    field: arkivmateriale
+    related_collection: arkivmateriale
+    meta:
+      junction_field: null
+      many_collection: reservationer
+      many_field: arkivmateriale
+      one_allowed_collections: null
+      one_collection: arkivmateriale
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: reservationer
+      column: arkivmateriale
+      foreign_key_table: arkivmateriale
+      foreign_key_column: id
+      constraint_name: reservationer_arkivmateriale_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE
+  - collection: reservationer
+    field: bog
+    related_collection: bibliotek
+    meta:
+      junction_field: null
+      many_collection: reservationer
+      many_field: bog
+      one_allowed_collections: null
+      one_collection: bibliotek
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: reservationer
+      column: bog
+      foreign_key_table: bibliotek
+      foreign_key_column: id
+      constraint_name: reservationer_bog_foreign
+      on_update: NO ACTION
+      on_delete: CASCADE

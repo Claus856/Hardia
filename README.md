@@ -5,7 +5,7 @@ tekstservice, der trækker tekst ud af PDF'er, maskinlæser scanninger og fotos 
 Registrering af genstande, arkivmateriale og bibliotek med billeder/scanninger, hvor hver post har en
 mindste-grad (`min_grad`), og et medlem kun ser de poster og filer, som medlemmets egen grad giver adgang til.
 
-Status: **proof of concept** (version 1.3.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
+Status: **proof of concept** (version 1.4.0). Kører på en Chromebook (Chrome OS' Linux-miljø) på det lokale netværk over HTTP.
 
 ## Indhold
 
@@ -14,12 +14,14 @@ Status: **proof of concept** (version 1.3.0). Kører på en Chromebook (Chrome O
 | `docker-compose.yml` | Directus + PostgreSQL + tekstservice. Alle værdier kommer fra `.env` |
 | `setup.sh` | Opretter `.env` med tilfældige hemmeligheder og data-mapperne |
 | `scripts/check-env.sh` | Miljøtjek; `--install` installerer Docker |
-| `scripts/provision.sh` | Datamodel, indstillinger, roller, rettigheder, servicebruger og flows (`--seed`: også testdata) |
+| `scripts/provision.sh` | Datamodel, indstillinger, roller, rettigheder, servicebruger, flows og bogmærker (`--seed`: også testdata) |
 | `scripts/verify.sh` | Automatisk test af roller, grad-filtrering og fil-beskyttelse |
 | `scripts/backup.sh`, `restore.sh` | Backup og gendannelse |
 | `scripts/snapshot.sh` | Eksporterer datamodellen til `schema/snapshot.yaml` |
 | `scripts/backfill.sh` | Kører tekstudtræk og søgeordsforslag for alle eksisterende poster i arkivmateriale |
 | `tekstservice/` | Tekstservicen (Python, FastAPI, pdftotext, ocrmypdf/tesseract). OCR ligger i `ocr.py`. Søgeordsforslagene laves i `soegeord.py` ud fra `ordfrekvens_da.txt` og `stopord_da.txt` |
+| `bootstrap/udlaan.mjs` | Flowet "Ryd udlån ved retur" og bogmærket "Udlånt" for Arkivar og Administrator |
+| `extensions/directus-extension-udlaan-koe/` | Feltet "Kø" på genstande, arkivmateriale og bøger: stil dig i kø, og se hvor mange der står der (ren JS, ingen build) |
 | `bootstrap/tekst.mjs` | Servicebrugeren "Tekstservice", de fire flows, mappen "OCR", flow-knapperne for Arkivar og bogmærkerne |
 | `extensions-src/foto/`, `extensions/` | Directus-modulet "Tag billede" (kildekode og bygget udgave) |
 | `extensions/directus-extension-nummer/` | Hook: automatiske numre, validering af placeringskoder (ren JS, ingen build) |
@@ -39,8 +41,8 @@ Genstande og arkivmateriale kan have flere billeder/scanninger.
 | Rolle | Må |
 |---|---|
 | Administrator | Alt, herunder oprette brugere og sætte deres grad |
-| Arkivar | Se alt, oprette og redigere poster, uploade filer. Kan ikke slette |
-| Medlem | Kun læse poster, hvor `min_grad` ≤ medlemmets grad, og kun de filer, der hører til en synlig post |
+| Arkivar | Se alt, oprette og redigere poster, uploade filer. Kan ikke slette poster. Ser lånerens navn og hvem der står i kø, og kan fjerne en plads i køen |
+| Medlem | Kun læse poster, hvor `min_grad` ≤ medlemmets grad, og kun de filer, der hører til en synlig post. Kan stille sig i kø til en post og se antallet i køen, men ikke lånerens navn eller hvem der står i køen |
 | Tekstservice | Servicebruger (ikke en person): læser arkivmateriale og de filer, der er valgt til søgning, uanset grad, skriver kun de udtrukne tekstfelter og lægger søgbare PDF'er (OCR) på posten. Se [Tekstudtræk og søgeord](#tekstudtræk-og-søgeord) |
 
 En fil, der ikke er knyttet til nogen post, er skjult for medlemmer. Hæves en posts `min_grad`, mister
@@ -104,6 +106,40 @@ docker compose up -d --wait
 - **Flyttes** en post, eller ændres kode/overordnet på en placering, **regnes numrene nedenunder om**. Det gamle nummer er derefter ugyldigt,
   så nye labels skal skrives ved flytning. Alle koder på stien skal være udfyldt, ellers afvises posten.
 - Poster med eksplicit nummer og uden placering (testdata, import) lades urørte. `POST /nummer/omnummerer` (kun admin) regner alle poster om.
+
+## Udlån og kø
+
+Genstande, arkivmateriale og bøger har feltet **Status**. Sættes det til **Udlånt**, dukker tre felter op:
+
+| Felt | Indhold |
+|---|---|
+| `udlaant_til` (Udlånt til) | Lånerens navn som fri tekst. Påkrævet ved Udlånt. Ses kun af Arkivar og Administrator |
+| `udlaant_dato` (Udlånt den) | Påkrævet ved Udlånt |
+| `retur_dato` (Forventet retur) | Valgfri |
+
+- Felterne vises og kræves via felt-betingelser i formularen. Sættes status tilbage, tømmer flowet "Ryd udlån ved retur"
+  de tre felter, før ændringen gemmes.
+- Bogmærket **Udlånt** under hver samling viser det, der er lånt ud lige nu, med låner og datoer. Det findes kun for
+  Arkivar og Administrator, fordi et medlem ikke må hente kolonnen "Udlånt til".
+- Feltet **Kø** på posten (udvidelsen `udlaan-koe`) har knappen "Stil mig i kø" / "Forlad køen" og viser antallet i køen.
+  Arkivar og Administrator ser desuden navnene i rækkefølge og kan fjerne en plads. Pladsen gemmes med det samme som en
+  række i den skjulte collection `reservationer` (`bruger`, `oprettet` og ét af felterne `genstand`, `arkivmateriale`, `bog`).
+- Medlemmets læseadgang til køen er to regler, som Directus lægger sammen felt for felt: policyen "Medlem" giver `id` og
+  post-felterne for alle rækker på poster, medlemmet må se (antallet), og policyen "Medlem: egen plads i køen" giver alle
+  felter på medlemmets egne rækker. Andres `bruger` og `oprettet` kommer derfor tilbage som `null`.
+- Medlemmets feltliste på de tre samlinger er alle felter undtagen `udlaant_til`. Listen dannes, når `configure.mjs` køres:
+  **kør `./scripts/provision.sh` igen, når der er oprettet nye felter i datamodellen**, ellers kan medlemmer ikke se dem.
+- Arkivar kan læse `id`, `first_name` og `last_name` på alle brugere (for at se navnene i køen).
+
+### Opgradering fra 1.3.0
+
+```bash
+./scripts/backup.sh
+./scripts/provision.sh            # status på arkivmateriale, udlånsfelterne, køen, rettigheder, flow og bogmærker
+docker compose restart directus   # indlæser den nye datamodel, feltet Kø og Vejledning
+```
+
+Eksisterende dokumenter i arkivmateriale får status "I arkiv".
 
 ## Tekstudtræk og søgeord
 
@@ -401,7 +437,8 @@ KEEP=14 ./scripts/backup.sh                      # behold flere
 
 Ret datamodellen i Directus som administrator, kør `./scripts/snapshot.sh`, og commit `schema/snapshot.yaml`.
 `provision.sh` anvender snapshottet på en tom instans og kan køres igen uden skade.
-Flows, roller, rettigheder og bogmærker er ikke en del af snapshottet; de ligger i `bootstrap/configure.mjs` og `bootstrap/tekst.mjs`.
+Flows, roller, rettigheder og bogmærker er ikke en del af snapshottet; de ligger i `bootstrap/configure.mjs`, `bootstrap/tekst.mjs` og `bootstrap/udlaan.mjs`.
+Efter nye felter på genstande, arkivmateriale eller bibliotek skal `provision.sh` køres igen, så medlemmernes feltliste kommer til at omfatte dem.
 
 ## HTTPS (senere)
 
@@ -430,6 +467,9 @@ bør der sættes en omvendt proxy med TLS foran, fx Caddy. Det er ikke bygget en
 - Kameravalget i filvælgeren er kun kontrolleret som attribut i siden, ikke på en rigtig telefon.
 - Serveren er kun tilgængelig, mens Chromebooken er tændt, Linux-miljøet kører, og portvideresendelsen er slået til.
 - Arkivar kan ikke slette poster eller filer; det kan kun Administrator.
+- Udlån: at "Udlånt til" og "Udlånt den" skal udfyldes, håndhæves i formularen, ikke i API'et. Tidligere udlån gemmes ikke som historik (kun i Directus' revisionshistorik, som administratoren kan se).
+- Kø: der sendes ingen besked til den næste i køen, og køen ryddes ikke ved retur; arkivaren ser køen på posten og fjerner selv pladsen. Dobbelt tilmelding forhindres i brugerfladen, ikke i databasen. Via API'et kan et medlem oprette en plads til et post-id, det ikke må se (det får intet at vide om posten derved).
+- Et medlem kan ikke se, hvem de andre i køen er, men kan via API'et sortere køen efter brugerfeltet og dermed se, om to pladser tilhører samme (ukendte) bruger.
 - Backups ligger lokalt, og `.env` er ikke med i dem.
 - Directus 11 er under BSL 1.1-licens; vurder selv, om logens brug er dækket.
 - OCR læser trykt og maskinskrevet tekst, ikke håndskrift, og laver fejl ved skæve, uskarpe eller mørke fotos og ved gotisk skrift. Teksten kan ikke rettes; skriv de vigtigste ord i Søgeord.
